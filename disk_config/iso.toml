@@ -19,6 +19,3 @@ enable = [
 disable = [
   "org.fedoraproject.Anaconda.Modules.Subscription",
 ]
-[[customizations.yum.repositories]]
-id = "terra-mesa"
-gpgcheck = false
