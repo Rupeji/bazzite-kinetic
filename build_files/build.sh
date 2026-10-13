@@ -17,5 +17,12 @@ dnf5 -y install \
     nautilus
 
 ### 4. Activar los servicios necesarios
+#systemctl enable podman.socket
+#systemctl --global add-wants kineticwe.service upowerd.service
+
+### 4. Activar los servicios de soporte reales
+# Habilitamos el socket de podman para tus contenedores
 systemctl enable podman.socket
-systemctl --global add-wants kineticwe.service upowerd.service
+
+# Activamos upowerd de forma global para la gestión de batería si usas portátil
+systemctl --global enable upower.service
