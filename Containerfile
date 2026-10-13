@@ -8,7 +8,7 @@ FROM ghcr.io/ublue-os/bazzite:stable
 # Universal Blue Images: https://github.com/orgs/ublue-os/packages
 
 #COPY services /usr/lib/systemd/user/
-RUN sed -i 's|file:///etc/pki/rpm-gpg/RPM-GPG-KEY-terra44-mesa|https://fyralabs.com|g' /etc/yum.repos.d/terra-mesa.repo
+
 ### MODIFICATIONS
 ## make modifications desired in your image and install packages by modifying the build.sh script
 ## the following RUN directive does all the things required to run "build.sh" as recommended.
