@@ -14,10 +14,8 @@ dnf5 -y install \
     kineticwe \
     noctalia-shell \
     alacritty \
-    gdm \
     nautilus
 
 ### 4. Activar los servicios necesarios
 systemctl enable podman.socket
 systemctl --global add-wants kineticwe.service upowerd.service
-
