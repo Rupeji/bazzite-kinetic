@@ -4,6 +4,7 @@ set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE
 dnf5 copr enable theblackdon/kineticwe -y
+dnf5 copr enable lionheartp/Hyprland -y
 
 ### 2. Eliminar por completo el entorno KDE Plasma
 dnf5 -y remove plasma-workspace plasma-* kde-*
