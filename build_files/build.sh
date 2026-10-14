@@ -48,7 +48,7 @@ ARCHIVO_RPM=$(basename "$URL_RPM")
 
 # 3. Descargar el paquete e instalarlo de forma nativa resolviendo dependencias
 curl -L -o "$ARCHIVO_RPM" "$URL_RPM"
-dnf5 -y localinstall "$ARCHIVO_RPM"
+dnf5 -y install "$ARCHIVO_RPM"
 rm -f "$ARCHIVO_RPM"
 
 ### 5. Generar configuraciones estéticas premium globales (/etc/skel)
