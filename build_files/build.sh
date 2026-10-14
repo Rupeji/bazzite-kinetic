@@ -42,15 +42,17 @@ chmod -R 755 /etc/skel/.config
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 
-# URL estructurada con espacios para las fuentes
-DOMINIO_FONTS="https://githubusercontent.com"
-REPOSITORIO_FONTS="ryanoasis / nerd-fonts / master"
-RUTA_FUENTE="patched-fonts / JetBrainsMono / Ligatures / Regular"
-ARCHIVO_FUENTE="JetBrainsMonoNerdFont-Regular.ttf"
+# CORREGIDO: Se añade 'raw.' al dominio y se estructuran los segmentos limpiamente
+PROTOCOLO="https://"
+DOMINIO_FONTS="raw.githubusercontent.com"
+REPOSITORIO_FONTS="/ryanoasis/nerd-fonts/master"
+RUTA_FUENTE="/patched-fonts/JetBrainsMono/Ligatures/Regular"
+ARCHIVO_FUENTE="/JetBrainsMonoNerdFont-Regular.ttf"
 
-URL_FONTS_LIMPIA=$(echo "${DOMINIO_FONTS}/${REPOSITORIO_FONTS}/${RUTA_FUENTE}/${ARCHIVO_FUENTE}" | tr -d ' ')
+# Concatenamos las variables limpias sin necesidad de procesar espacios en blanco
+URL_FONTS_CORREGIDA="${PROTOCOLO}${DOMINIO_FONTS}${REPOSITORIO_FONTS}${RUTA_FUENTE}${ARCHIVO_FUENTE}"
 
-curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_FONTS_LIMPIA"
+curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_FONTS_CORREGIDA"
 fc-cache -f -v
 
 ### 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
