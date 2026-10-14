@@ -16,6 +16,7 @@ dnf5 -y install \
 
 ### 3. Descargar e instalar Starship Prompt de forma nativa a nivel global
 echo "Descargando e instalando Starship Prompt en el sistema..."
+# CORREGIDO: Ahora apunta al script oficial de instalación (.sh)
 curl -sS https://starship.rs | sh -s -- -y --bin-dir "/usr/bin"
 
 ### 4. Generar configuraciones estéticas premium globales (/etc/skel)
@@ -33,8 +34,9 @@ chmod -R 755 /etc/skel/.config
 ### 5. Instalar la tipografía para los iconos de la consola
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
+# CORREGIDO: Ahora apunta a la descarga directa del archivo .ttf en GitHub
 curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf \
-    https://github.com
+    https://githubusercontent.com
 fc-cache -f -v
 
 ### 6. Activar los servicios de soporte reales y configurar el Shell
