@@ -14,10 +14,17 @@ dnf5 -y install \
     kitty \
     nautilus
 
-### 3. Descargar e instalar Starship Prompt de forma nativa a nivel global
+### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
 echo "Descargando e instalando Starship Prompt en el sistema..."
-# CORREGIDO: Ahora apunta al script oficial de instalación (.sh)
-curl -sS https://starship.rs | sh -s -- -y --bin-dir "/usr/bin"
+
+# URL estructurada con espacios para Starship (Garantiza descargar la última versión)
+DOMINIO_STARSHIP="https://starship.rs"
+ARCHIVO_STARSHIP="install.sh"
+
+URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d ' ')
+
+# Descarga el instalador oficial, el cual detecta y compila automáticamente el 'latest release'
+curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
 ### 4. Generar configuraciones estéticas premium globales (/etc/skel)
 mkdir -p /etc/skel/.config/kitty
@@ -35,21 +42,21 @@ chmod -R 755 /etc/skel/.config
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 
-# URL separada de manera segura usando variables de Bash para evitar errores visuales
-DOMINIO="https://githubusercontent.com"
-REPOSITORIO="ryanoasis / nerd-fonts / master"
+# URL estructurada con espacios para las fuentes
+DOMINIO_FONTS="https://githubusercontent.com"
+REPOSITORIO_FONTS="ryanoasis / nerd-fonts / master"
 RUTA_FUENTE="patched-fonts / JetBrainsMono / Ligatures / Regular"
-ARCHIVO="JetBrainsMonoNerdFont-Regular.ttf"
+ARCHIVO_FUENTE="JetBrainsMonoNerdFont-Regular.ttf"
 
-# Eliminamos los espacios en blanco antes de ejecutar el curl
-URL_LIMPIA=$(echo "${DOMINIO}/${REPOSITORIO}/${RUTA_FUENTE}/${ARCHIVO}" | tr -d ' ')
+URL_FONTS_LIMPIA=$(echo "${DOMINIO_FONTS}/${REPOSITORIO_FONTS}/${RUTA_FUENTE}/${ARCHIVO_FUENTE}" | tr -d ' ')
 
-curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_LIMPIA"
+curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_FONTS_LIMPIA"
 fc-cache -f -v
 
-### 6. Activar los servicios de soporte reales y configurar el Shell
+### 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
 # Forzar a que todos los nuevos usuarios tengan Fish por defecto en el sistema
 sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 
-# Habilitamos el socket de podman para tus contenedores
-systemctl enable podman.socket
+# Habilitar el socket de podman creando el enlace simbólico manualmente (Evita fallos en Build Time)
+mkdir -p /etc/systemd/system/sockets.target.wants
+ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
