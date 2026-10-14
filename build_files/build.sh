@@ -17,13 +17,12 @@ dnf5 -y install \
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
 echo "Descargando e instalando Starship Prompt en el sistema..."
 
-# URL estructurada con espacios para Starship (Garantiza descargar la última versión)
 DOMINIO_STARSHIP="https://starship.rs"
 ARCHIVO_STARSHIP="install.sh"
 
 URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d ' ')
 
-# Descarga el instalador oficial, el cual detecta y compila automáticamente el 'latest release'
+# Descarga el instalador oficial (este script detecta el latest release automáticamente)
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
 ### 4. Generar configuraciones estéticas premium globales (/etc/skel)
@@ -38,21 +37,20 @@ cp /ctx/config.fish /etc/skel/.config/fish/config.fish
 # Aseguramos los permisos estándar para que el usuario pueda editarlos
 chmod -R 755 /etc/skel/.config
 
-### 5. Instalar la tipografía para los iconos de la consola
+### 5. Instalar la tipografía oficial para los iconos de la consola
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 
-# CORREGIDO: Se añade 'raw.' al dominio y se estructuran los segmentos limpiamente
-PROTOCOLO="https://"
-DOMINIO_FONTS="raw.githubusercontent.com"
-REPOSITORIO_FONTS="/ryanoasis/nerd-fonts/master"
-RUTA_FUENTE="/patched-fonts/JetBrainsMono/Ligatures/Regular"
-ARCHIVO_FUENTE="/JetBrainsMonoNerdFont-Regular.ttf"
+# URL estructurada con espacios usando los servidores de release de GitHub (Evita el error 404)
+DOMINIO_FONTS="https://github.com"
+REPOSITORIO_FONTS="ryanoasis / nerd-fonts / releases / latest / download"
+ARCHIVO_FONTS="JetBrainsMono.tar.xz"
 
-# Concatenamos las variables limpias sin necesidad de procesar espacios en blanco
-URL_FONTS_CORREGIDA="${PROTOCOLO}${DOMINIO_FONTS}${REPOSITORIO_FONTS}${RUTA_FUENTE}${ARCHIVO_FUENTE}"
+URL_FONTS_LIMPIA=$(echo "${DOMINIO_FONTS} / ${REPOSITORIO_FONTS} / ${ARCHIVO_FONTS}" | tr -d ' ')
 
-curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_FONTS_CORREGIDA"
+# Descargamos el archivo comprimido oficial (.tar.xz) y lo descomprimimos directamente en el directorio de fuentes
+curl -sSL "$URL_FONTS_LIMPIA" | tar -xJ -C /usr/share/fonts/jetbrains-mono-nerd/
+
 fc-cache -f -v
 
 ### 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
