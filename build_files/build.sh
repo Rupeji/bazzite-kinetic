@@ -7,7 +7,7 @@ dnf5 copr enable theblackdon/kineticwe -y
 dnf5 copr enable lionheartp/Hyprland -y
 
 ### 2. Eliminar por completo el entorno KDE Plasma
-dnf5 -y remove kwin kwin-common kwin-libs kglobalacceld kdecoration
+#dnf5 -y remove kwin kwin-common kwin-libs kglobalacceld kdecoration
 #dnf5 -y remove plasma-workspace plasma-* kde-*
 
 ### 3. Instalar tu nuevo escritorio y tus apps no-desarrollador
