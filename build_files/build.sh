@@ -10,7 +10,6 @@ dnf5 copr enable lionheartp/Hyprland -y
 # Quitamos fastfetch y starship de aquí para evitar fallos de DNF
 dnf5 -y install \
     kineticwe \
-    noctalia \
     noctalia-git \
     kitty \
     nautilus
