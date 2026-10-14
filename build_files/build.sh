@@ -34,9 +34,17 @@ chmod -R 755 /etc/skel/.config
 ### 5. Instalar la tipografía para los iconos de la consola
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
-# CORREGIDO: Ahora apunta a la descarga directa del archivo .ttf en GitHub
-curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf \
-    https://githubusercontent.com
+
+# URL separada de manera segura usando variables de Bash para evitar errores visuales
+DOMINIO="https://githubusercontent.com"
+REPOSITORIO="ryanoasis / nerd-fonts / master"
+RUTA_FUENTE="patched-fonts / JetBrainsMono / Ligatures / Regular"
+ARCHIVO="JetBrainsMonoNerdFont-Regular.ttf"
+
+# Eliminamos los espacios en blanco antes de ejecutar el curl
+URL_LIMPIA=$(echo "${DOMINIO}/${REPOSITORIO}/${RUTA_FUENTE}/${ARCHIVO}" | tr -d ' ')
+
+curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_LIMPIA"
 fc-cache -f -v
 
 ### 6. Activar los servicios de soporte reales y configurar el Shell
