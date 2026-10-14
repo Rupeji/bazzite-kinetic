@@ -1,12 +1,5 @@
 [customizations.installer.kickstart]
 contents = """
-# Configuración regional e idioma del sistema (Español)
-lang es_ES.UTF-8
-
-# Distribución del teclado (Español estándar de España)
-keyboard --vckeymap=es --layout=es
-
-# Script de instalación de Bazzite
 %post
 bootc switch --mutate-in-place --transport registry ghcr.io/rupeji/bazzite-kinetic:latest
 %end
@@ -14,15 +7,15 @@ bootc switch --mutate-in-place --transport registry ghcr.io/rupeji/bazzite-kinet
 
 [customizations.installer.modules]
 enable = [
-    "org.fedoraproject.Anaconda.Modules.Storage",
-    "org.fedoraproject.Anaconda.Modules.Runtime",
-    "org.fedoraproject.Anaconda.Modules.Network",
-    "org.fedoraproject.Anaconda.Modules.Security",
-    "org.fedoraproject.Anaconda.Modules.Services",
-    "org.fedoraproject.Anaconda.Modules.Users",
-    "org.fedoraproject.Anaconda.Modules.Timezone",
-    "org.fedoraproject.Anaconda.Modules.Keyboard"
+  "org.fedoraproject.Anaconda.Modules.Storage",
+  "org.fedoraproject.Anaconda.Modules.Runtime",
+  "org.fedoraproject.Anaconda.Modules.Network",
+  "org.fedoraproject.Anaconda.Modules.Security",
+  "org.fedoraproject.Anaconda.Modules.Services",
+  "org.fedoraproject.Anaconda.Modules.Users",
+  "org.fedoraproject.Anaconda.Modules.Timezone"
 ]
+
 disable = [
-    "org.fedoraproject.Anaconda.Modules.Subscription"
+  "org.fedoraproject.Anaconda.Modules.Subscription",
 ]
