@@ -2,7 +2,7 @@
 
 set -ouex pipefail
 
-### 1. Instalar dependencias necesarias para compilar KineticWE V2
+### 1. Instalar dependencias necesarias para compilar KineticWE V2 a 
 # Instalamos las herramientas de desarrollo esenciales de forma temporal
 dnf5 -y install \
     git \
