@@ -1,1 +1,1 @@
-Bazzite + KineticWE
+Bazzite-nvidia-open + KineticWE
