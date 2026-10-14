@@ -12,8 +12,7 @@ dnf5 -y install \
     noctalia-git \
     kitty \
     nautilus \
-    starship \
-    fastfetch
+    starship
 
 ### 3. Generar configuraciones estéticas premium globales (/etc/skel)
 mkdir -p /etc/skel/.config/kitty
