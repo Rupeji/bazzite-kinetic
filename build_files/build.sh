@@ -11,8 +11,7 @@ dnf5 copr enable lionheartp/Hyprland -y
 dnf5 -y install \
     kineticwe \
     noctalia-git \
-    kitty \
-    nautilus
+    kitty
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
 echo "Descargando e instalando Starship Prompt en el sistema..."
