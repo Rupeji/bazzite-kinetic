@@ -3,15 +3,15 @@
 set -ouex pipefail
 
 ### 1. Instalar dependencias necesarias para compilar KineticWE V2
-# Instalamos las herramientas de desarrollo esenciales de forma temporal
-dnf5 -y install \
+# Eliminamos mesa-libGL-devel para evitar el conflicto con los drivers de Bazzite
+# Añadimos --skip-broken para que DNF ignore paquetes conflictivos automáticamente
+dnf5 -y install --skip-broken \
     git \
     cargo \
     rust \
     clang-devel \
     wayland-devel \
     libinput-devel \
-    mesa-libGL-devel \
     kitty
 
 ### 2. Clonar y Compilar de forma nativa la V2 (Rama kineticwe-2.0)
@@ -20,7 +20,7 @@ mkdir -p /tmp/kinetic-build
 cd /tmp/kinetic-build
 
 # Clonamos la rama específica del creador
-git clone --branch kineticwe-2.0 https://gitlab.com/theblackdon/kineticwe.git
+git clone --branch kineticwe-2.0 https://gitlab.com
 cd kineticwe
 
 # Compilamos en modo Release usando el motor de Rust (Optimización máxima)
@@ -28,7 +28,8 @@ cargo build --release
 
 # Movemos los binarios resultantes directamente a las rutas globales del sistema
 cp target/release/kineticwe /usr/bin/kineticwe
-# Si el proyecto genera su gestor de ventanas noctalia-git en esta rama, lo copiamos igual:
+
+# Si el proyecto genera su gestor de ventanas noctalia en esta rama, lo copiamos igual:
 if [ -f target/release/noctalia ]; then
     cp target/release/noctalia /usr/bin/noctalia
 fi
