@@ -16,7 +16,6 @@ dnf5 -y install \
     fastfetch
 
 ### 3. Generar configuraciones estéticas premium globales (/etc/skel)
-# Creamos los directorios en el esqueleto de futuros usuarios
 mkdir -p /etc/skel/.config/kitty
 mkdir -p /etc/skel/.config/fish
 
@@ -28,17 +27,16 @@ cp /ctx/config.fish /etc/skel/.config/fish/config.fish
 # Aseguramos los permisos estándar para que el usuario pueda editarlos
 chmod -R 755 /etc/skel/.config
 
-### 4. Activar los servicios de soporte reales
-# Habilitamos el socket de podman para tus contenedores
-systemctl enable podman.socket
-
-# 1. Crear el directorio global de fuentes del sistema
+### 4. Instalar la tipografía para los iconos de la consola
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
-
-# 2. Descargar la tipografía oficial JetBrainsMono Nerd Font (Versión Regular)
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 curl -fLo /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf \
     https://github.com
-
-# 3. Refrescar la caché de fuentes del sistema operativo
 fc-cache -f -v
+
+### 5. Activar los servicios de soporte reales y configurar el Shell
+# Forzar a que todos los nuevos usuarios tengan Fish por defecto en el sistema
+sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
+
+# Habilitamos el socket de podman para tus contenedores
+systemctl enable podman.socket
