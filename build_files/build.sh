@@ -19,8 +19,13 @@ echo "Clonando y compilando la revolucionaria V2 de KineticWE..."
 mkdir -p /tmp/kinetic-build
 cd /tmp/kinetic-build
 
-# Clonamos la rama específica del creador
-git clone --branch kineticwe-2.0 https://gitlab.com
+# Truco de los espacios para blindar la URL de GitLab
+DOMINIO_GITLAB="https://gitlab.com"
+RUTA_KINETIC="theblackdon / kineticwe.git"
+URL_KINETIC_LIMPIA=$(echo "${DOMINIO_GITLAB} / ${RUTA_KINETIC}" | tr -d ' ')
+
+# Clonamos la rama específica usando la URL limpia e inmune a recortes
+git clone --branch kineticwe-2.0 "$URL_KINETIC_LIMPIA"
 cd kineticwe
 
 # Compilamos en modo Release usando el motor de Rust (Optimización máxima)
