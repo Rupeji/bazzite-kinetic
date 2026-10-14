@@ -3,13 +3,13 @@
 set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
-dnf5 copr enable theblackdon/kineticwe -y
-dnf5 copr enable lionheartp/Hyprland -y
+dnf5 copr enable linuxgamerlife/lgl-experimental -y
+dnf5 -y remove plasma-workspace plasma-* kde-*
 
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
 dnf5 -y install \
     kineticwe \
-    noctalia-git \
+    kineticwe-greeter \
     kitty
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
