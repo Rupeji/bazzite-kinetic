@@ -7,7 +7,6 @@ dnf5 copr enable theblackdon/kineticwe -y
 dnf5 copr enable lionheartp/Hyprland -y
 
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
-# Quitamos fastfetch y starship de aquí para evitar fallos de DNF
 dnf5 -y install \
     kineticwe \
     noctalia-git \
@@ -24,7 +23,35 @@ URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d '
 # Descarga el instalador oficial (este script detecta el latest release automáticamente)
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
-### 4. Generar configuraciones estéticas premium globales (/etc/skel)
+### 4. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
+echo "Buscando e instalando la última release de gSlapper para Fedora..."
+
+REPO="Nomadcxx/gSlapper"
+PROTOCOLO="https://"
+DOMINIO="api.github.com"
+RUTA="/repos/$REPO/releases/latest"
+
+API_URL=$(echo "${PROTOCOLO}${DOMINIO}${RUTA}" | tr -d ' ')
+
+# 1. Obtener la información de la release y extraer el enlace .rpm de forma segura
+JSON_DATA=$(curl -s "$API_URL")
+URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' | grep '\.rpm$')
+
+# 2. Verificar si se encontró el paquete de Fedora de manera no interactiva para la build
+if [ -z "$URL_RPM" ]; then
+    echo "Error: No se pudo encontrar un paquete .rpm en la última versión de gSlapper."
+    exit 1
+fi
+
+# Extraer el nombre del archivo de la URL
+ARCHIVO_RPM=$(basename "$URL_RPM")
+
+# 3. Descargar el paquete e instalarlo de forma nativa resolviendo dependencias
+curl -L -o "$ARCHIVO_RPM" "$URL_RPM"
+dnf5 -y localinstall "$ARCHIVO_RPM"
+rm -f "$ARCHIVO_RPM"
+
+### 5. Generar configuraciones estéticas premium globales (/etc/skel)
 mkdir -p /etc/skel/.config/kitty
 mkdir -p /etc/skel/.config/fish
 
@@ -36,11 +63,10 @@ cp /ctx/config.fish /etc/skel/.config/fish/config.fish
 # Aseguramos los permisos estándar para que el usuario pueda editarlos
 chmod -R 755 /etc/skel/.config
 
-### 5. Instalar la tipografía oficial para los iconos de la consola
+### 6. Instalar la tipografía oficial para los iconos de la consola
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 
-# URL estructurada con espacios usando los servidores de release de GitHub (Evita el error 404)
 DOMINIO_FONTS="https://github.com"
 REPOSITORIO_FONTS="ryanoasis / nerd-fonts / releases / latest / download"
 ARCHIVO_FONTS="JetBrainsMono.tar.xz"
@@ -52,7 +78,7 @@ curl -sSL "$URL_FONTS_LIMPIA" | tar -xJ -C /usr/share/fonts/jetbrains-mono-nerd/
 
 fc-cache -f -v
 
-### 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
+### 7. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
 # Forzar a que todos los nuevos usuarios tengan Fish por defecto en el sistema
 sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 
