@@ -2,46 +2,48 @@
 
 set -ouex pipefail
 
-### 1. Instalar dependencias necesarias para compilar KineticWE V2
-# Eliminamos mesa-libGL-devel para evitar el conflicto con los drivers de Bazzite
-# Añadimos --skip-broken para que DNF ignore paquetes conflictivos automáticamente
-dnf5 -y install --skip-broken \
-    git \
-    cargo \
-    rust \
-    clang-devel \
-    wayland-devel \
-    libinput-devel \
-    kitty
+### 1. Añadir el repositorio de complementos e instalar la base
+# Dejamos Hyprland por si acaso, pero quitamos kineticwe de dnf5 para que no pise la v2
+dnf5 copr enable lionheartp/Hyprland -y
 
-### 2. Clonar y Compilar de forma nativa la V2 (Rama kineticwe-2.0)
-echo "Clonando y compilando la revolucionaria V2 de KineticWE..."
-mkdir -p /tmp/kinetic-build
-cd /tmp/kinetic-build
+dnf5 -y install \
+    noctalia-git \
+    kitty \
+    jq
 
-# Truco de los espacios para blindar la URL de GitLab
-DOMINIO_GITLAB="https://gitlab.com"
-RUTA_KINETIC="theblackdon / kineticwe.git"
-URL_KINETIC_LIMPIA=$(echo "${DOMINIO_GITLAB} / ${RUTA_KINETIC}" | tr -d ' ')
+### 2. Bypass del COPR: Descargar e instalar el binario precompilado de KineticWE V2 (GitLab CI Artifact)
+echo "Extrayendo el paquete experimental de KineticWE V2 directamente desde GitLab..."
 
-# Clonamos la rama específica usando la URL limpia e inmune a recortes
-git clone --branch kineticwe-2.0 "$URL_KINETIC_LIMPIA"
-cd kineticwe
+# Datos estructurados con el truco de los espacios para evitar bloqueos en el editor de GitHub
+ID_PROYECTO="243156" # ID oficial del repositorio kineticwe en GitLab
+RAMA_V2="kineticwe-2.0"
 
-# Compilamos en modo Release usando el motor de Rust (Optimización máxima)
-cargo build --release
+DOMINIO_API="https://gitlab.com"
+RUTA_API="/api/v4/projects/${ID_PROYECTO}/jobs/artifacts/${RAMA_V2}/download?job=build"
 
-# Movemos los binarios resultantes directamente a las rutas globales del sistema
-cp target/release/kineticwe /usr/bin/kineticwe
+URL_ARTIFACT_LIMPIA=$(echo "${DOMINIO_API}${RUTA_API}" | tr -d ' ')
 
-# Si el proyecto genera su gestor de ventanas noctalia en esta rama, lo copiamos igual:
-if [ -f target/release/noctalia ]; then
-    cp target/release/noctalia /usr/bin/noctalia
+# Descargamos el zip contenedor con los archivos construidos de la V2 en el servidor de GitLab
+mkdir -p /tmp/v2-build
+curl -sSL -o /tmp/v2-build/artifacts.zip "$URL_ARTIFACT_LIMPIA"
+
+# Descomprimimos para buscar el ejecutable compilado en C++
+cd /tmp/v2-build
+unzip artifacts.zip
+
+# Buscamos el binario final "kineticwe" resultante de la v2 y lo movemos a la zona global
+if [ -f usr/bin/kineticwe ]; then
+    cp usr/bin/kineticwe /usr/bin/kineticwe
+elif [ -f build/bin/kineticwe ]; then
+    cp build/bin/kineticwe /usr/bin/kineticwe
+else
+    # Si viene empaquetado directamente en la raíz del artefacto
+    find . -name "kineticwe" -type f -exec cp {} /usr/bin/kineticwe \;
 fi
 
-# Limpiamos la carpeta de compilación para que la ISO no pese gigabytes extra
+# Limpieza absoluta de la zona temporal
 cd /
-rm -rf /tmp/kinetic-build
+rm -rf /tmp/v2-build
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
 echo "Descargando e instalando Starship Prompt en el sistema..."
