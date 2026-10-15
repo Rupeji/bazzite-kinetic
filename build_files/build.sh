@@ -10,6 +10,8 @@ dnf5 -y remove plasma-workspace plasma-* kde-*
 dnf5 -y install \
     kineticwe \
     kineticwe-greeter \
+    thunar \
+    gvfs \
     kitty
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
