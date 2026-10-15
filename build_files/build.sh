@@ -10,9 +10,31 @@ dnf5 -y remove plasma-workspace plasma-* kde-*
 dnf5 -y install \
     kineticwe \
     kineticwe-greeter \
+    noctalia-greeter \
+    greetd \
     thunar \
     gvfs \
     kitty
+
+
+
+
+### 4.5 Configurar y habilitar Noctalia Greeter de forma global
+echo "Configurando Noctalia Greeter con greetd..."
+
+# Crear el directorio de configuración del gestor de entrada
+mkdir -p /etc/greetd
+
+# Generar el archivo de configuración asignando Noctalia Greeter por defecto
+cat <<EOF > /etc/greetd/config.toml
+[default_session]
+command = "noctalia-greeter --cmd start-kineticwe"
+user = "greeter"
+EOF
+
+# Habilitar el servicio del sistema para que inicie en el arranque
+systemctl enable greetd.service
+
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
 echo "Descargando e instalando Starship Prompt en el sistema..."
