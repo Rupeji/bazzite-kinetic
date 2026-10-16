@@ -12,6 +12,7 @@ dnf5 -y install \
     kineticwe-greeter \
     thunar \
     gvfs \
+    firefox \
     kitty
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
