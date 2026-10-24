@@ -5,7 +5,6 @@ set -ouex pipefail
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
 dnf5 copr enable theblackdon/kwee -y
 dnf5 -y remove plasma-workspace plasma-* kde-*
-dnf5 repoquery --unneeded
 
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
 dnf5 -y install \
@@ -89,3 +88,8 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 # Habilitar el socket de podman creando el enlace simbólico manualmente (Evita fallos en Build Time)
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
+
+### 8. LIMPIEZA ABSOLUTA (Elimina las advertencias de 'bootc container lint')
+# Borramos metadatos de dnf y rastros generados en /var para que el linter pase en verde
+dnf5 clean all
+rm -rf /var/cache/dnf /var/lib/dnf/repos /var/log/dnf*
