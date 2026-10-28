@@ -4,8 +4,15 @@ set -ouex pipefail
 echo "=== INICIANDO INSTALACIÓN MODULAR DE HERRAMIENTAS ==="
 
 # 1. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
-echo "Instalando Starship Prompt..."
-curl -sS https://starship.rs | sh -s -- -y --bin-dir "/usr/bin"
+echo "Descargando e instalar Starship Prompt en el sistema..."
+
+DOMINIO_STARSHIP="https://starship.rs"
+ARCHIVO_STARSHIP="install.sh"
+
+URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d ' ')
+
+# Descarga el instalador oficial de forma segura
+curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
 # 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
