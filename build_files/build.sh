@@ -26,6 +26,41 @@ URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d '
 # Descarga el instalador oficial (este script detecta el latest release automáticamente)
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
+
+### Aquí empieza lo extra
+### 7.5 HABILITAR EL GREETER DE DON ESTÁTICAMENTE (Adiós post-instalación manual)
+
+# 1. Crear la estructura y la configuración de greetd apuntando a Noctalia
+mkdir -p /etc/greetd
+cat << 'EOF' > /etc/greetd/config.toml
+[terminal]
+vt = 1
+
+[default_session]
+command = "noctalia-greeter-session"
+user = "greeter"
+EOF
+
+# 2. Asegurar los privilegios del usuario del sistema encargado del login gráfico
+usermod -aG video,render greeter || true
+
+# 3. Crear el archivo de plantilla tmpfiles de Don para regenerar la estética Catppuccin
+mkdir -p /usr/lib/tmpfiles.d
+install -Dm0644 /dev/stdin /usr/lib/tmpfiles.d/zz-kineticos-greeter.conf << 'EOF'
+# KineticOS: seed the Catppuccin greeter default on first boot.
+C /var/lib/noctalia-greeter/greeter.toml 0644 greetd greetd - /usr/share/kineticos/greeter.toml
+EOF
+
+# 4. EL TRUCO MAESTRO: Enlazar el servicio manualmente (Esto equivale a systemctl enable)
+# Rompemos el enlace antiguo por si KDE dejó rastros de SDDM/GDM
+rm -f /etc/systemd/system/display-manager.service
+
+# Creamos el directorio de dependencias del Display Manager y enlazamos greetd
+mkdir -p /etc/systemd/system/display-manager.service.wants
+ln -sf /usr/lib/systemd/system/greetd.service /etc/systemd/system/display-manager.service
+
+### Aquí termina lo añadido
+
 ### 4. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
