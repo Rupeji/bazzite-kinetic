@@ -1,4 +1,16 @@
 #!/bin/bash
+
+# Activar los repositorios de Terra obligatorios usando el método blindado de Don
+if [ -f /etc/yum.repos.d/terra.repo ]; then
+  sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/terra.repo
+fi
+
+if [ -f /etc/yum.repos.d/terra-extras.repo ]; then
+  sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/terra-extras.repo
+fi
+
+
+
 set -ouex pipefail
 
 echo "=== INICIANDO CONFIGURACIÓN MODULAR DEL SISTEMA ==="
