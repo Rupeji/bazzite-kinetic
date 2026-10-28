@@ -5,7 +5,7 @@ echo "=== INICIANDO INSTALACIÓN MODULAR DE HERRAMIENTAS ==="
 
 # 1. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
 echo "Instalando Starship Prompt..."
-curl -sS "https://starship.rs" | sh -s -- -y --bin-dir "/usr/bin"
+curl -sS https://starship.rs | sh -s -- -y --bin-dir "/usr/bin"
 
 # 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
