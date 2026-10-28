@@ -3,13 +3,16 @@
 set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
-dnf5 copr enable theblackdon/kineticwe -y
-dnf5 copr enable lionheartp/Hyprland -y
+dnf5 copr enable theblackdon/kwee -y
+dnf5 -y remove plasma-workspace plasma-* kde-*
 
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
 dnf5 -y install \
     kineticwe \
-    noctalia-git \
+    kineticwe-greeter \
+    thunar \
+    gvfs \
+    firefox \
     kitty
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
@@ -22,6 +25,41 @@ URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d '
 
 # Descarga el instalador oficial (este script detecta el latest release automáticamente)
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
+
+
+### Aquí empieza lo extra
+### 7.5 HABILITAR EL GREETER DE DON ESTÁTICAMENTE (Adiós post-instalación manual)
+
+# 1. Crear la estructura y la configuración de greetd apuntando a Noctalia
+mkdir -p /etc/greetd
+cat << 'EOF' > /etc/greetd/config.toml
+[terminal]
+vt = 1
+
+[default_session]
+command = "noctalia-greeter-session"
+user = "greeter"
+EOF
+
+# 2. Asegurar los privilegios del usuario del sistema encargado del login gráfico
+usermod -aG video,render greeter || true
+
+# 3. Crear el archivo de plantilla tmpfiles de Don para regenerar la estética Catppuccin
+mkdir -p /usr/lib/tmpfiles.d
+install -Dm0644 /dev/stdin /usr/lib/tmpfiles.d/zz-kineticos-greeter.conf << 'EOF'
+# KineticOS: seed the Catppuccin greeter default on first boot.
+C /var/lib/noctalia-greeter/greeter.toml 0644 greetd greetd - /usr/share/kineticos/greeter.toml
+EOF
+
+# 4. EL TRUCO MAESTRO: Enlazar el servicio manualmente (Esto equivale a systemctl enable)
+# Rompemos el enlace antiguo por si KDE dejó rastros de SDDM/GDM
+rm -f /etc/systemd/system/display-manager.service
+
+# Creamos el directorio de dependencias del Display Manager y enlazamos greetd
+mkdir -p /etc/systemd/system/display-manager.service.wants
+ln -sf /usr/lib/systemd/system/greetd.service /etc/systemd/system/display-manager.service
+
+### Aquí termina lo añadido
 
 ### 4. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
@@ -85,3 +123,8 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 # Habilitar el socket de podman creando el enlace simbólico manualmente (Evita fallos en Build Time)
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
+
+### 8. LIMPIEZA ABSOLUTA (Elimina las advertencias de 'bootc container lint')
+# Borramos metadatos de dnf y rastros generados en /var para que el linter pase en verde
+dnf5 clean all
+rm -rf /var/cache/dnf /var/lib/dnf/repos /var/log/dnf*
