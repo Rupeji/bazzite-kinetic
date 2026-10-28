@@ -1,0 +1,8 @@
+kineticwe
+kineticwe-greeter
+nemo
+nemo-fileroller
+file-roller
+gvfs
+firefox
+kitty
