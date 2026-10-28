@@ -81,4 +81,26 @@ ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/s
 rm -f /etc/systemd/system/multi-user.target.wants/kineticos-overlay-mount.service
 rm -f /etc/systemd/system/multi-user.target.wants/kineticos-overlay-sync.service
 
+# 5. REPARACIÓN AUTOMÁTICA DEL GESTOR GRÁFICO (Evita el error greeter not found)
+# Crear el usuario oculto greeter de forma segura si no fue creado por la base
+if ! id "greeter" &>/dev/null; then
+  useradd -r -M -d /var/lib/greetd -s /sbin/nologin greeter || true
+fi
+
+# Forzar la regeneración de grupos y asegurar los accesos de hardware para Noctalia
+mkdir -p /etc/sysusers.d
+echo "g video - -" > /etc/sysusers.d/video.conf
+echo "g input - -" > /etc/sysusers.d/input.conf
+systemd-sysusers || true
+usermod -aG video,input greeter || true
+
+# 6. CONFIGURACIÓN REGIONAL EN LA RAÍZ (Teclado e idioma en español de fábrica)
+echo "KEYMAP=es" > /etc/vconsole.conf
+echo "LANG=es_ES.UTF-8" > /etc/locale.conf
+
+# 7. ENLACE DIRECTO DE SESIÓN (Rompemos el bucle de login)
+# Fuerza a que el entorno de greetd sepa exactamente que debe lanzar el escritorio de Don
+echo "kineticwe" > /etc/skel/.wayland-session
+chmod +x /etc/skel/.wayland-session
+
 echo "=== CONFIGURACIÓN DEL SISTEMA COMPLETADA CON ÉXITO ==="
