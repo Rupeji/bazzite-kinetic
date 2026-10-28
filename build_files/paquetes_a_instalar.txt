@@ -15,3 +15,10 @@ kitty
 # === DEPENDENCIAS DE SISTEMA Y UTILIDADES ===
 xdg-user-dirs
 eza
+
+# === REPARACIONES DE SISTEMA Y ENTORNO ===
+shadow-utils
+xdg-user-dirs
+eza
+qt5ct
+qt6ct
