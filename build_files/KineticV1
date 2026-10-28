@@ -4,13 +4,46 @@ set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
 dnf5 copr enable theblackdon/kwee -y
-dnf5 -y remove plasma-workspace plasma-* kde-*
+### 1.5 PURGA AVANZADA DE BAZZITE (Desde archivo independiente en /ctx/)
+
+# [Scripts Pre] Borrado manual de launchers de apps de Bazzite y configs de SDDM viejas
+rm -f /usr/share/applications/waydroid-container-restart.desktop
+rm -f /usr/libexec/waydroid-container-restart \
+      /usr/libexec/waydroid-container-start \
+      /usr/libexec/waydroid-container-stop \
+      /usr/libexec/waydroid-fix-controllers
+rm -rf /usr/share/applications/Waydroid
+rm -f /usr/share/applications/discourse.desktop
+rm -f /usr/share/applications/bazzite-documentation.desktop
+rm -f /usr/share/applications/system-update.desktop
+rm -rf /etc/sddm.conf.d
+rm -f /etc/sddm.conf
+
+# Ruta absoluta basada en el montaje virtual del Containerfile
+PATH_LISTA="/ctx/paquetes_a_borrar.txt"
+
+if [ -f "$PATH_LISTA" ]; then
+    # LEER, LIMPIAR COMENTARIOS Y CONVERTIR SALTOS DE LÍNEA EN ESPACIOS
+    PAQUETES_FILTRADOS=$(grep -v '^#' "$PATH_LISTA" | grep -v '^$' | tr '\n' ' ')
+    
+    if [ -n "${PAQUETES_FILTRADOS// /}" ]; then
+        echo "Iniciando la purga masiva de paquetes seleccionados..."
+        dnf5 -y remove $PAQUETES_FILTRADOS
+    else
+        echo "Advertencia: El archivo paquetes_a_borrar.txt no contiene paquetes válidos."
+    fi
+else
+    echo "ERROR Crítico: No se ha encontrado el archivo paquetes_a_borrar.txt en /ctx/"
+    exit 1
+fi
 
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
 dnf5 -y install \
     kineticwe \
     kineticwe-greeter \
-    thunar \
+    nemo \
+    nemo-fileroller \
+    file-roller \
     gvfs \
     firefox \
     kitty
@@ -123,6 +156,51 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 # Habilitar el socket de podman creando el enlace simbólico manualmente (Evita fallos en Build Time)
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
+
+
+### 7.8 Inyectar el servicio First-Boot para desinstalar Flatpaks del sistema
+mkdir -p /usr/libexec
+cat << 'EOF' > /usr/libexec/kineticos-remove-flatpaks
+#!/usr/bin/bash
+set -u
+install -d /var/lib/kineticos
+stamp=/var/lib/kineticos/flatpak-removals.done
+touch "$stamp"
+for app in \
+    io.github.DenysMb.Kontainer \
+    com.github.Matoking.protontricks \
+    org.kde.kcalc \
+    org.kde.okular \
+    org.mozilla.firefox \
+    org.kde.haruna \
+    org.kde.gwenview \
+    io.github.flattool.Warehouse \
+    com.github.tchx84.Flatseal \
+    org.gnome.Firmware
+do
+    grep -qxF "$app" "$stamp" && continue
+    flatpak uninstall -y --system --noninteractive "$app" >/dev/null 2>&1 || true
+    echo "$app" >> "$stamp"
+done
+EOF
+chmod 755 /usr/libexec/kineticos-remove-flatpaks
+
+cat << 'EOF' > /usr/lib/systemd/system/kineticos-flatpak-removals.service
+[Unit]
+Description=Remove unwanted Bazzite system Flatpaks (once per app)
+ConditionPathExists=/usr/bin/flatpak
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/kineticos-remove-flatpaks
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+mkdir -p /etc/systemd/system/multi-user.target.wants
+ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-removals.service
 
 ### 8. LIMPIEZA ABSOLUTA (Elimina las advertencias de 'bootc container lint')
 # Borramos metadatos de dnf y rastros generados en /var para que el linter pase en verde
