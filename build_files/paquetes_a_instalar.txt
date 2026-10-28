@@ -1,3 +1,4 @@
+# === ENTORNO GRÁFICO KINETICWE & NEMO ===
 kineticwe
 kineticwe-greeter
 nemo
@@ -5,4 +6,12 @@ nemo-fileroller
 file-roller
 gvfs
 firefox
+
+# === MOTORES DE TEMAS QT Y TERMINAL ===
+qt5ct
+qt6ct
 kitty
+
+# === DEPENDENCIAS DE SISTEMA Y UTILIDADES ===
+xdg-user-dirs
+eza
