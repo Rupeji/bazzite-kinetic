@@ -16,18 +16,28 @@ curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
 # 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
-REPO="Nomadcxx/gSlapper"
-API_URL="https://github.com{REPO}/releases/latest"
 
+REPO="Nomadcxx/gSlapper"
+PROTOCOLO="https://"
+DOMINIO="api.github.com"
+RUTA="/repos/$REPO/releases/latest"
+
+API_URL=$(echo "${PROTOCOLO}${DOMINIO}${RUTA}" | tr -d ' ')
+
+# 1. Obtener la información de la release y extraer el enlace .rpm de forma segura
 JSON_DATA=$(curl -s "$API_URL")
 URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' | grep '\.rpm$')
 
+# 2. Verificar si se encontró el paquete de Fedora de manera no interactiva para la build
 if [ -z "$URL_RPM" ]; then
     echo "Error: No se pudo encontrar un paquete .rpm en la última versión de gSlapper."
     exit 1
 fi
 
+# Extraer el nombre del archivo de la URL
 ARCHIVO_RPM=$(basename "$URL_RPM")
+
+# 3. Descargar el paquete e instalarlo de forma nativa resolviendo dependencias
 curl -L -o "$ARCHIVO_RPM" "$URL_RPM"
 dnf5 -y install "$ARCHIVO_RPM"
 rm -f "$ARCHIVO_RPM"
