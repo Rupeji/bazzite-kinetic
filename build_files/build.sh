@@ -41,7 +41,9 @@ fi
 dnf5 -y install \
     kineticwe \
     kineticwe-greeter \
-    thunar \
+    nemo \
+    nemo-fileroller \
+    file-roller \
     gvfs \
     firefox \
     kitty
