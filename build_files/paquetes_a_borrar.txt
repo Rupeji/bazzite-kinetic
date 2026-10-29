@@ -80,7 +80,7 @@ plasma-desktoptheme
 sddm-kcm
 
 # === KDE CORE APPS ===
-ark
+#ark
 gwenview
 elisa
 okular
