@@ -83,11 +83,11 @@ if git clone --depth 1 https://github.com/Rupeji/IconsWalls "$DIR_TEMPORAL"; the
         cp -r "$DIR_TEMPORAL/Iconos"/* /etc/skel/.local/share/icons/
     fi
 
-    # 2. Despliegue de los Wallpapers en la ruta nativa de fondos del sistema
+    # 2. Despliegue de los Wallpapers en el directorio editable del usuario (~/Pictures)
     if [ -d "$DIR_TEMPORAL/Wallpapers" ]; then
-        echo "Copiando Wallpapers a la ruta global del sistema /usr/share/backgrounds/..."
-        mkdir -p /usr/share/backgrounds
-        cp -r "$DIR_TEMPORAL/Wallpapers"/* /usr/share/backgrounds/
+        echo "Copiando Wallpapers a la plantilla editable /etc/skel/Pictures/Wallpapers/..."
+        mkdir -p /etc/skel/Pictures/Wallpapers
+        cp -r "$DIR_TEMPORAL/Wallpapers"/* /etc/skel/Pictures/Wallpapers/
     fi
     
     echo "¡Assets globales copiados con éxito!"
