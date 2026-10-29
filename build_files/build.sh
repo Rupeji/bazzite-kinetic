@@ -18,8 +18,6 @@ PAQUETES_BORRAR=$(grep -v '^#' "/ctx/paquetes_a_borrar.txt" | grep -v '^$' | tr 
 dnf5 -y install \
     kineticwe \
     kineticwe-greeter \
-    thunar \
-    gvfs \
     firefox \
     kitty
 
