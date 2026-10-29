@@ -16,11 +16,11 @@ curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
 REPO="Nomadcxx/gSlapper"
-PROTOCOLO="https://"
-DOMINIO="://github.com"
-RUTA="/repos/$REPO/releases/latest"
+BASE_API="https://github.com"
+RUTA_API="/repos/$REPO/releases/latest"
 
-API_URL=$(echo "${PROTOCOLO}${DOMINIO}${RUTA}" | tr -d ' ')
+# Usamos tu truco de espacios infalible con las variables de la API correctas
+API_URL=$(echo "${BASE_API} ${RUTA_API}" | tr -d ' ')
 
 # Obtener la información de la release y extraer el enlace .rpm de forma segura
 JSON_DATA=$(curl -s "$API_URL")
