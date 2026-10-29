@@ -36,6 +36,7 @@ try:
                 continue
             if in_remove:
                 if line_str.startswith('- '):
+                    # Separamos por '#' para quitar comentarios, tomamos el primer elemento y limpiamos espacios
                     pkg = line_str[2:].split('#')[0].strip()
                     if pkg:
                         pkgs.append(pkg)
@@ -66,7 +67,6 @@ ARCHIVO_STARSHIP="install.sh"
 
 URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d ' ')
 
-# Tu método original de descarga
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
 
@@ -76,7 +76,6 @@ echo "Buscando e instalando la última release de gSlapper para Fedora..."
 REPO="Nomadcxx/gSlapper"
 API_URL=$(echo "https://github.com{REPO}/releases/latest" | tr -d ' ')
 
-# Tu método original de extracción por API
 JSON_DATA=$(curl -s "$API_URL")
 URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' | grep '\.rpm$')
 
