@@ -6,6 +6,7 @@ set -ouex pipefail
 dnf5 copr enable theblackdon/kwee -y
 dnf5 -y remove plasma-workspace plasma-* kde-*
 
+
 # =====================================================================
 # 2. Scripts PRE-remoción y purga masiva desde removals.yaml
 # =====================================================================
@@ -23,7 +24,6 @@ rm -f /usr/share/applications/system-update.desktop
 rm -rf /etc/sddm.conf.d
 
 echo "Extrayendo paquetes a eliminar de removals.yaml..."
-# Parseador corregido paso a paso: evita aplicar métodos de strings a listas
 PAQUETES_BORRAR=$(python3 -c "
 import sys
 pkgs = []
@@ -37,11 +37,8 @@ try:
                 continue
             if in_remove:
                 if line_str.startswith('- '):
-                    # 1. Quitamos el '- ' inicial
                     raw_pkg = line_str[2:]
-                    # 2. Separamos por '#' para aislar comentarios y tomamos la primera parte
                     clean_pkg = raw_pkg.split('#')[0]
-                    # 3. Quitamos espacios sobrantes del nombre resultante
                     pkg = clean_pkg.strip()
                     if pkg:
                         pkgs.append(pkg)
@@ -57,17 +54,20 @@ if [ -n "${PAQUETES_BORRAR// /}" ]; then
     dnf5 -y remove $PAQUETES_BORRAR
 fi
 
+
 # =====================================================================
 # 3. Ejecutar Instalación Masiva desde lista externa
 # =====================================================================
 PAQUETES_INSTALAR=$(grep -v '^#' "/ctx/paquetes_a_instalar.txt" | grep -v '^$' | tr '\n' ' ')
 [ -n "${PAQUETES_INSTALAR// /}" ] && dnf5 -y install $PAQUETES_INSTALAR
 
+
 # =====================================================================
 # 4. Entorno de Terminal Completo (Módulos terminal, prompts, fuentes)
 # =====================================================================
 echo "Ejecutando configuración completa de la terminal y fuentes..."
 bash /ctx/terminal.sh
+
 
 # =====================================================================
 # 5. Despliegue del Script Externo de Flatpaks y Servicio Systemd
@@ -93,6 +93,7 @@ EOF
 
 mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-removals.service
+
 
 # =====================================================================
 # 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
