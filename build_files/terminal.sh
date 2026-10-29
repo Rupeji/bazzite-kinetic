@@ -16,7 +16,7 @@ curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
 REPO="Nomadcxx/gSlapper"
-BASE_API="https://github.com"
+BASE_API="https://api.github.com"  # <- Corregido aquí para usar el subdominio api
 RUTA_API="/repos/$REPO/releases/latest"
 
 # Usamos tu truco de espacios infalible con las variables de la API correctas
