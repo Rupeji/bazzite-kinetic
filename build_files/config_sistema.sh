@@ -141,4 +141,33 @@ if [ -f /etc/greetd/config.toml ]; then
   mv -f /etc/greetd/config.toml.tmp /etc/greetd/config.toml || true
 fi
 
+
+# 9. INTEGRACIÓN DE WALLPAPERS Y ICONOS (IconsWalls de Rupeji)
+echo "=== DESCARGANDO ICONOS Y WALLPAPERS DE GITHUB ==="
+DIR_TEMPORAL="/tmp/git_iconswalls_backup"
+SKEL_DESTINO="/etc/skel/Pictures"
+
+# Asegurar que el directorio Pictures del esqueleto universal exista
+mkdir -p "$SKEL_DESTINO"
+rm -rf "$DIR_TEMPORAL"
+
+# Clonamos el repositorio de imágenes en la zona temporal del contenedor
+if git clone --depth 1 https://github.com/Rupeji/IconsWalls "$DIR_TEMPORAL" >/dev/null 2>&1; then
+    # Copiamos la carpeta de Iconos al esqueleto de usuario
+    if [ -d "$DIR_TEMPORAL/Iconos" ]; then
+        cp -r "$DIR_TEMPORAL/Iconos" "$SKEL_DESTINO/"
+    fi
+    # Copiamos la carpeta de Wallpapers al esqueleto de usuario
+    if [ -d "$DIR_TEMPORAL/Wallpapers" ]; then
+        cp -r "$DIR_TEMPORAL/Wallpapers" "$SKEL_DESTINO/"
+    fi
+    chmod -R 755 "$SKEL_DESTINO"
+    echo "[✓] ¡IconsWalls inyectados con éxito en el esqueleto de fábrica!"
+else
+    echo "[!] Advertencia: No se pudo conectar con GitHub para descargar las imágenes."
+fi
+
+# Limpieza absoluta de rastros dentro del contenedor de la build
+rm -rf "$DIR_TEMPORAL"
+
 echo "=== CONFIGURACIÓN DEL SISTEMA COMPLETADA CON ÉXITO ==="
