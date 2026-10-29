@@ -28,7 +28,7 @@ rm -rf /var/cache/dnf /var/lib/dnf/repos /var/log/dnf*
 ###############################################################################
 #
 # CONTEXTO DEL ENTORNO DE COMPILACIÓN:
-# - Imagen Base: ghcr.io/ublue-os/bazzite-nvidia-open:stable (Inmutable/Bootc)
+# - Imagen Base: ghcr.io/ublue-os/bazzite-nvidia-open:stable (Inmutable/Bootc) [1.13]
 # - Modelo de Compilación: Orquestado vía Containerfile sin persistencia intermedia.
 # - Montaje Virtual: Toda la carpeta 'build_files/' se monta dinámicamente durante 
 #   la build dentro del directorio raíz temporal '/ctx/' mediante un bind mount 
@@ -38,21 +38,25 @@ rm -rf /var/cache/dnf /var/lib/dnf/repos /var/log/dnf*
 # 1. 'paquetes_a_borrar.txt' -> Archivo plano con la purga masiva de paquetes de 
 #    Bazzite/KDE Plasma (lista heredada y optimizada del spin oficial de Don).
 # 2. 'paquetes_a_instalar.txt' -> Lista de dependencias del entorno KineticWE, 
-#    utilizando Nemo + File-Roller (con extensiones de extracción gráfica) en 
-#    lugar de Thunar, manteniendo gvfs para automontaje, red y papelera.
+#    utilizando Nemo + File-Roller. Añadidos 'xdg-user-dirs', 'qt5ct', 'qt6ct' y 
+#    'shadow-utils' para reparar la base tras la amputación de la paquetería de KDE.
 # 3. 'config_login.sh' -> Configuración estática del display manager 'greetd' en 
 #    /etc/greetd/config.toml apuntando a 'noctalia-greeter-session'. Inicializa 
-#    el tema Catppuccin mediante systemd-tmpfiles (zz-kineticos-greeter.conf) 
-#    en /var y habilita el gestor forzando symlinks manuales (Build-Time safe).
+#    el tema Catppuccin mediante systemd-tmpfiles (zz-kineticos-greeter.conf) y 
+#    fuerza el cargador nativo de la sesión gráfica.
 # 4. 'instalar_herramientas.sh' -> Despliegue global de Starship Prompt, gSlapper 
 #    (obteniendo dinámicamente el último .rpm vía GitHub API), inyección de 
 #    perfiles estéticos premium en /etc/skel y aprovisionamiento de fuentes tipográficas.
 # 5. 'config_sistema.sh' -> Cambios estructurales del OS: shell predeterminada a 
-#    Fish, socket nativo de Podman y siembra de la unidad 'first-boot' de systemd 
-#    para purgar Flatpaks de fábrica redundantes (Firefox, Okular, etc.) en el cliente.
+#    Fish, socket nativo de Podman y siembra de la unidad 'first-boot' de systemd. 
+#    BUNKERIZADO: Activación obligatoria manual de repositorios de Terra (enabled=1), 
+#    desactivación de terra-mesa (enabled=0), aprovisionamiento de usuario 'greeter' 
+#    fijo en /etc/passwd con grupos dinámicos (video/input), mapas de teclado en 
+#    castellano (KEYMAP=es), y blindaje absoluto de permisos (chmod 777) con override 
+#    'unconfined' de SELinux para solucionar de raíz el bucle de login de Noctalia [1.11].
 #
 # NOTAS PARA FUTURAS MODIFICACIONES:
-# - CUALQUIER comando interactivo o que requiera 'systemctl enable' romperá la build.
+# - Las redirecciones a archivos del sistema (/etc) en las GitHub Actions deben hacerse 
+#   exclusivamente usando 'tee' para evadir los bloqueos de permisos denegados de Bash.
 # - Las activaciones de servicios deben hacerse inyectando enlaces simbólicos en /etc/systemd/...
-# - Si se añaden o quitan apps de la ISO, modificar únicamente las listas .txt correspondientes.
 ###############################################################################
