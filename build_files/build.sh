@@ -1,20 +1,66 @@
 #!/bin/bash
 
-### Este era el viejo que arranca y hay que hacer la config del greeter
-
 set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
 dnf5 copr enable theblackdon/kwee -y
 dnf5 -y remove plasma-workspace plasma-* kde-*
 
-# 2. Ejecutar Purga Masiva desde lista externa
+# =====================================================================
+# 2. Ejecutar Purga Masiva desde el archivo .yaml (Sección "remove:")
+# =====================================================================
+# Eliminamos configuraciones conflictivas previas
 rm -f /usr/share/applications/waydroid-* /etc/sddm.conf
-PAQUETES_BORRAR=$(grep -v '^#' "/ctx/paquetes_a_borrar.txt" | grep -v '^$' | tr '\n' ' ')
-[ -n "${PAQUETES_BORRAR// /}" ] && dnf5 -y remove $PAQUETES_BORRAR
 
+# Ejecutamos el bloque de scripts "pre" definidos en tu YAML antes de borrar los paquetes
+echo "Ejecutando scripts PRE-remoción..."
+rm -f /usr/share/applications/waydroid-container-restart.desktop
+rm -f /usr/libexec/waydroid-container-restart \
+      /usr/libexec/waydroid-container-start \
+      /usr/libexec/waydroid-container-stop \
+      /usr/libexec/waydroid-fix-controllers
+rm -rf /usr/share/applications/Waydroid
+rm -f /usr/share/applications/discourse.desktop
+rm -f /usr/share/applications/bazzite-documentation.desktop
+rm -f /usr/share/applications/system-update.desktop
+rm -rf /etc/sddm.conf.d
+rm -f /etc/sddm.conf
 
+# Extraemos la lista de paquetes debajo de "remove:" usando un parser rápido de Python
+echo "Extrayendo paquetes a eliminar del archivo YAML..."
+PAQUETES_BORRAR=$(python3 -c "
+import sys
+import yaml # Si no está el módulo yaml, usamos parsing de texto plano seguro
+try:
+    with open('/ctx/removals.yaml', 'r') as f:
+        data = yaml.safe_load(f)
+        print(' '.join(data.get('remove', [])))
+except Exception:
+    # Alternativa segura en texto plano por si la imagen base de la build no tiene PyYAML integrado
+    with open('/ctx/removals.yaml', 'r') as f:
+        in_remove = False
+        pkgs = []
+        for line in f:
+            line_str = line.strip()
+            if line_str.startswith('remove:'):
+                in_remove = True
+                continue
+            elif in_remove and line_str.startswith('- '):
+                pkgs.append(line_str.split('- ')[1].split('#')[0].strip())
+            elif in_remove and line_str and not line_str.startswith('-') and not line_str.startswith('#'):
+                break
+        print(' '.join(pkgs))
+")
+
+# Procedemos a desinstalar todos los paquetes extraídos
+if [ -n "${PAQUETES_BORRAR// /}" ]; then
+    echo "Eliminando los siguientes paquetes: $PAQUETES_BORRAR"
+    dnf5 -y remove $PAQUETES_BORRAR
+fi
+
+# =====================================================================
 # 3. Ejecutar Instalación Masiva desde lista externa
+# =====================================================================
 PAQUETES_INSTALAR=$(grep -v '^#' "/ctx/paquetes_a_instalar.txt" | grep -v '^$' | tr '\n' ' ')
 [ -n "${PAQUETES_INSTALAR// /}" ] && dnf5 -y install $PAQUETES_INSTALAR
 
@@ -44,7 +90,7 @@ echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
 REPO="Nomadcxx/gSlapper"
 PROTOCOLO="https://"
-DOMINIO="api.github.com"
+DOMINIO="://github.com"
 RUTA="/repos/$REPO/releases/latest"
 
 API_URL=$(echo "${PROTOCOLO}${DOMINIO}${RUTA}" | tr -d ' ')
@@ -93,6 +139,57 @@ URL_FONTS_LIMPIA=$(echo "${DOMINIO_FONTS} / ${REPOSITORIO_FONTS} / ${ARCHIVO_FON
 curl -sSL "$URL_FONTS_LIMPIA" | tar -xJ -C /usr/share/fonts/jetbrains-mono-nerd/
 
 fc-cache -f -v
+
+# =====================================================================
+# 6.5. Inyectar scripts POST y Servicios de Primer Inicio (del YAML)
+# =====================================================================
+echo "Configurando servicios post-instalación de Flatpaks..."
+
+# Creación del helper ejecutable para la limpieza de flatpaks en primer arranque
+install -Dm0755 /dev/stdin /usr/libexec/kineticos-remove-flatpaks << 'EOF'
+#!/usr/bin/bash
+set -u
+install -d /var/lib/kineticos
+stamp=/var/lib/kineticos/flatpak-removals.done
+touch "$stamp"
+for app in \
+    io.github.DenysMb.Kontainer \
+    com.github.Matoking.protontricks \
+    org.kde.kcalc \
+    org.kde.okular \
+    org.mozilla.firefox \
+    org.kde.haruna \
+    org.kde.gwenview \
+    io.github.flattool.Warehouse \
+    com.github.tchx84.Flatseal \
+    org.gnome.Firmware
+do
+    grep -qxF "$app" "$stamp" && continue
+    flatpak uninstall -y --system --noninteractive "$app" >/dev/null 2>&1 || true
+    echo "$app" >> "$stamp"
+done
+EOF
+
+# Creación de la unidad de systemd para el primer arranque
+mkdir -p /usr/lib/systemd/system
+cat << 'EOF' > /usr/lib/systemd/system/kineticos-flatpak-removals.service
+[Unit]
+Description=Remove unwanted Bazzite system Flatpaks (once per app)
+ConditionPathExists=/usr/bin/flatpak
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/kineticos-remove-flatpaks
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Habilitar el servicio de flatpaks para que se ejecute en el despliegue del sistema
+mkdir -p /etc/systemd/system/multi-user.target.wants
+ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-removals.service
+
 
 ### 7. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
 # Forzar a que todos los nuevos usuarios tengan Fish por defecto en el sistema
