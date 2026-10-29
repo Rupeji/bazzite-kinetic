@@ -74,11 +74,7 @@ curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
 REPO="Nomadcxx/gSlapper"
-PROTOCOLO="https://"
-DOMINIO="://github.com"
-RUTA="/repos/$REPO/releases/latest"
-
-API_URL=$(echo "${PROTOCOLO}${DOMINIO}${RUTA}" | tr -d ' ')
+API_URL=$(echo "https://github.com{REPO}/releases/latest" | tr -d ' ')
 
 # Tu método original de extracción por API
 JSON_DATA=$(curl -s "$API_URL")
