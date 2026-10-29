@@ -37,6 +37,8 @@ set -u
 install -d /var/lib/kineticos
 stamp=/var/lib/kineticos/flatpak-removals.done
 touch "$stamp"
+
+# Primero: Purgamos los Flatpaks heredados rebeldes de Bazzite
 for app in \
     io.github.DenysMb.Kontainer \
     com.github.Matoking.protontricks \
@@ -53,6 +55,14 @@ do
     flatpak uninstall -y --system --noninteractive "$app" >/dev/null 2>&1 || true
     echo "$app" >> "$stamp"
 done
+
+# Segundo: Instalamos tus aplicaciones esenciales limpias con soporte nativo
+echo "[+] Desplegando suite de aplicaciones esenciales de Rupeji..."
+flatpak install flathub -y \
+    org.mozilla.firefox \
+    net.davidotek.pupgui2 \
+    com.bambulab.BambuStudio \
+    com.discordapp.Discord || true
 EOF
 chmod 755 /usr/libexec/kineticos-remove-flatpaks
 
@@ -80,6 +90,7 @@ ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/s
 rm -f /etc/systemd/system/multi-user.target.wants/kineticos-overlay-mount.service
 rm -f /etc/systemd/system/multi-user.target.wants/kineticos-overlay-sync.service
 
+
 # 5. REPARACIÓN AUTOMÁTICA DEL GESTOR GRÁFICO (Solución al os error 13)
 # Crear el usuario oculto greeter de forma segura si no fue creado por la base
 if ! id "greeter" &>/dev/null; then
@@ -104,12 +115,14 @@ if [ -d /etc/selinux ]; then
   printf '[Service]\nSecurityProfile=unconfined\n' | tee /etc/systemd/system/greetd.service.d/override.conf >/dev/null
 fi
 
+
 # 6. CONFIGURACIÓN REGIONAL EN LA RAÍZ (Teclado e idioma en español de fábrica)
 echo "KEYMAP=es" | tee /etc/vconsole.conf >/dev/null
 echo "LANG=es_ES.UTF-8" | tee /etc/locale.conf >/dev/null
 
+
 # 7. ENLACE DIRECTO DE SESIÓN (Rompemos el bucle de login definitivo)
-# En lugar de usar sed directo que da error de apertura, usamos tee para parchear el config.toml si existe
+# Parcheamos el config.toml usando tee para evadir bloqueos de apertura
 if [ -f /etc/greetd/config.toml ]; then
   sed 's/command = .*/command = "noctalia-greeter-session"/g' /etc/greetd/config.toml | tee /etc/greetd/config.toml.tmp >/dev/null
   mv -f /etc/greetd/config.toml.tmp /etc/greetd/config.toml || true
@@ -133,12 +146,6 @@ DesktopNames=KineticWE
 EOF
 
 chmod 644 /usr/share/wayland-sessions/kineticwe.desktop
-
-# Forzar a greetd a que su sesión por defecto sea explícitamente el cargador de Don
-if [ -f /etc/greetd/config.toml ]; then
-  sed 's/command = .*/command = "noctalia-greeter-session"/g' /etc/greetd/config.toml | tee /etc/greetd/config.toml.tmp >/dev/null
-  mv -f /etc/greetd/config.toml.tmp /etc/greetd/config.toml || true
-fi
 
 
 # 9. INTEGRACIÓN DE WALLPAPERS Y ICONOS (IconsWalls de Rupeji)
@@ -168,6 +175,7 @@ fi
 
 # Limpieza absoluta de rastros dentro del contenedor de la build
 rm -rf "$DIR_TEMPORAL"
+
 
 # 10. LIMPIEZA DE FIRMAS REPOSITORIOS (Jaque mate definitivo al Traceback de Anaconda)
 # Borramos los archivos .repo de Terra para que el instalador de la ISO nazca offline y estéril
