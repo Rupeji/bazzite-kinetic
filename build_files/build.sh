@@ -23,30 +23,38 @@ rm -f /usr/share/applications/system-update.desktop
 rm -rf /etc/sddm.conf.d
 
 echo "Extrayendo paquetes a eliminar de removals.yaml..."
+# Parseador de texto ultra-seguro en Python sin dependencias externas
 PAQUETES_BORRAR=$(python3 -c "
 import sys
+pkgs = []
 try:
     with open('/ctx/removals.yaml', 'r') as f:
         in_remove = False
-        pkgs = []
         for line in f:
             line_str = line.strip()
             if line_str.startswith('remove:'):
                 in_remove = True
                 continue
-            elif in_remove and line_str.startswith('- '):
-                pkg_name = line_str.split('- ')[1].split('#')[0].strip()
-                pkgs.append(pkg_name)
-            elif in_remove and line_str and not line_str.startswith('-') and not line_str.startswith('#'):
-                break
-        print(' '.join(pkgs))
+            if in_remove:
+                if line_str.startswith('- '):
+                    # Extraer el paquete quitando el '- ' y cualquier comentario posterior '#'
+                    pkg = line_str[2:].split('#')[0].strip()
+                    if pkg:
+                        pkgs.append(pkg)
+                elif line_str and not line_str.startswith('#') and not line_str.startswith('-'):
+                    # Si encontramos otra sección principal, dejamos de leer
+                    break
+    print(' '.join(pkgs))
 except Exception as e:
-    print('', file=sys.stderr)
+    print(f'Error leyendo YAML: {e}', file=sys.stderr)
+    sys.exit(1)
 ")
 
 if [ -n "${PAQUETES_BORRAR// /}" ]; then
-    echo "Eliminando paquetes: $PAQUETES_BORRAR"
+    echo "Eliminando paquetes detectados: $PAQUETES_BORRAR"
     dnf5 -y remove $PAQUETES_BORRAR
+else
+    echo "Aviso: No se detectaron paquetes para eliminar en removals.yaml"
 fi
 
 # =====================================================================
@@ -73,7 +81,7 @@ if [ -z "$URL_RPM" ]; then
     URL_RPM="https://github.com{REPO}/releases/latest/download/gSlapper.rpm"
 fi
 
-echo "Descargando e instalando RPM desde: $URL_RPM"
+echo "Descargando e Proteins e instalando RPM desde: $URL_RPM"
 if curl -L -f -o "gSlapper.rpm" "$URL_RPM"; then
     dnf5 -y install "gSlapper.rpm"
     rm -f "gSlapper.rpm"
@@ -98,7 +106,6 @@ fc-cache -f -v
 # 6.5. Despliegue del Script Externo de Flatpaks y Servicio Systemd
 # =====================================================================
 echo "Desplegando servicio e instalando script helper de Flatpaks..."
-# Copiamos de forma limpia el script que creamos fuera
 cp /ctx/clean-flatpaks.sh /usr/libexec/kineticos-remove-flatpaks
 chmod +x /usr/libexec/kineticos-remove-flatpaks
 
