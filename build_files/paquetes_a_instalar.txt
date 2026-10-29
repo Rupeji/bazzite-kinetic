@@ -1,24 +1,6 @@
-# === ENTORNO GRÁFICO KINETICWE & NEMO ===
+# === ENTORNO GRÁFICO KINETICWE + SPECTACLE + FIREFOX + KITTY ===
 kineticwe
 kineticwe-greeter
-nemo
-nemo-fileroller
-file-roller
-gvfs
+spectacle
 firefox
-
-# === MOTORES DE TEMAS QT Y TERMINAL ===
-qt5ct
-qt6ct
 kitty
-
-# === DEPENDENCIAS DE SISTEMA Y UTILIDADES ===
-xdg-user-dirs
-eza
-
-# === REPARACIONES DE SISTEMA Y ENTORNO ===
-shadow-utils
-xdg-user-dirs
-eza
-qt5ct
-qt6ct
