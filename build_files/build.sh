@@ -6,7 +6,13 @@ set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
 dnf5 copr enable theblackdon/kwee -y
-dnf5 -y remove plasma-workspace plasma-* kde-*
+#dnf5 -y remove plasma-workspace plasma-* kde-*
+
+# 2. Ejecutar Purga Masiva desde lista externa
+rm -f /usr/share/applications/waydroid-* /etc/sddm.conf
+PAQUETES_BORRAR=$(grep -v '^#' "/ctx/paquetes_a_borrar.txt" | grep -v '^$' | tr '\n' ' ')
+[ -n "${PAQUETES_BORRAR// /}" ] && dnf5 -y remove $PAQUETES_BORRAR
+
 
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
 dnf5 -y install \
