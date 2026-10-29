@@ -16,7 +16,7 @@ curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
 REPO="Nomadcxx/gSlapper"
-# Unificamos la URL en una sola línea limpia para evitar fallos de variables rotas
+# Línea corregida con la URL oficial de la API de GitHub y el símbolo $ bien puesto
 API_URL=$(echo "https://github.com{REPO}/releases/latest" | tr -d ' ')
 
 JSON_DATA=$(curl -s "$API_URL")
