@@ -102,3 +102,33 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
+
+
+# =====================================================================
+# 8. Automatización de KineticWE Greeter (Reemplazo nativo de setup-greeter)
+# =====================================================================
+echo "Configurando de forma automática el entorno de inicio de sesión (KineticWE Greeter)..."
+
+# 1. Asegurar que el directorio de configuración de greetd exista en la imagen
+mkdir -p /etc/greetd
+
+# 2. Escribir directamente el archivo config.toml definitivo del greeter
+cat << 'EOF' > /etc/greetd/config.toml
+[terminal]
+vt = 1
+
+[default_session]
+command = "/usr/bin/noctalia-greeter-session"
+user = "greeter"
+EOF
+
+# 3. Asegurar la presencia del usuario del greeter si el paquete de dnf no lo creó
+if ! id "greeter" &>/dev/null; then
+    echo "Creando usuario virtual del greeter..."
+    useradd -M -r -s /sbin/nologin -d /var/lib/greetd -G video,input greeter || true
+fi
+
+# 4. Habilitar de forma inmutable el servicio del gestor de entrada en Systemd
+echo "Activando greetd.service en el inicio del sistema..."
+mkdir -p /etc/systemd/system/graphical.target.wants
+ln -sf /usr/lib/systemd/system/greetd.service /etc/systemd/system/graphical.target.wants/greetd.service
