@@ -4,14 +4,16 @@ set -ouex pipefail
 
 echo "=== INICIANDO CONFIGURACIÓN MODULAR DEL SISTEMA ==="
 
-# 1. PARCHE DE REPOSITORIOS (El secreto de Don)
-# Activamos Terra y Terra-Extras para que DNF encuentre las dependencias de KineticWE
+# 1. PARCHE DE REPOSITORIOS (Solución definitiva al Traceback de Anaconda)
+# Activamos Terra y Terra-Extras asegurando que Anaconda no crashee por falta de firmas GPG en la ISO
 if [ -f /etc/yum.repos.d/terra.repo ]; then
   sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/terra.repo
+  echo "gpgcheck=0" | tee -a /etc/yum.repos.d/terra.repo >/dev/null
 fi
 
 if [ -f /etc/yum.repos.d/terra-extras.repo ]; then
   sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/terra-extras.repo
+  echo "gpgcheck=0" | tee -a /etc/yum.repos.d/terra-extras.repo >/dev/null
 fi
 
 # Desactivamos terra-mesa para que el constructor de la ISO no choque contra su firma GPG local
