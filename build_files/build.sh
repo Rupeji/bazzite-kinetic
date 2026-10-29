@@ -7,7 +7,6 @@ set -ouex pipefail
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
 dnf5 copr enable theblackdon/kwee -y
 dnf5 -y remove plasma-workspace plasma-* kde-*
-dnf5 -y group remove "KDE Plasma Workspaces" && sudo dnf5 -y autoremove
 
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
 dnf5 -y install \
