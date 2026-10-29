@@ -81,7 +81,7 @@ ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/s
 rm -f /etc/systemd/system/multi-user.target.wants/kineticos-overlay-mount.service
 rm -f /etc/systemd/system/multi-user.target.wants/kineticos-overlay-sync.service
 
-# 5. REPARACIÓN AUTOMÁTICA DEL GESTOR GRÁFICO (Evita el error greeter not found)
+# 5. REPARACIÓN AUTOMÁTICA DEL GESTOR GRÁFICO (Solución al os error 13)
 # Crear el usuario oculto greeter de forma segura si no fue creado por la base
 if ! id "greeter" &>/dev/null; then
   useradd -r -M -d /var/lib/greetd -s /sbin/nologin greeter || true
@@ -93,6 +93,17 @@ echo "g video - -" > /etc/sysusers.d/video.conf
 echo "g input - -" > /etc/sysusers.d/input.conf
 systemd-sysusers || true
 usermod -aG video,input greeter || true
+
+# BLINDAJE DE PERMISOS ABSOLUTO: Crear las rutas de configuración y dar paso total al greeter
+mkdir -p /var/lib/greetd/.config/glow
+chmod -R 777 /var/lib/greetd
+chown -R greeter:greeter /var/lib/greetd || true
+
+# Desactivar las restricciones de SELinux sobre el demonio de Greetd para evitar el os error 13
+if [ -d /etc/selinux ]; then
+  mkdir -p /etc/systemd/system/greetd.service.d
+  printf '[Service]\nSecurityProfile=unconfined\n' > /etc/systemd/system/greetd.service.d/override.conf || true
+fi
 
 # 6. CONFIGURACIÓN REGIONAL EN LA RAÍZ (Teclado e idioma en español de fábrica)
 echo "KEYMAP=es" > /etc/vconsole.conf
