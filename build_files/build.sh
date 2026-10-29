@@ -105,30 +105,61 @@ ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.
 
 
 # =====================================================================
-# 8. Automatización de KineticWE Greeter (Reemplazo nativo de setup-greeter)
+# 8. Programación del Asistente del Greeter (First Boot Config)
 # =====================================================================
-echo "Configurando de forma automática el entorno de inicio de sesión (KineticWE Greeter)..."
+echo "Desplegando el script de configuración inicial para KineticWE Greeter..."
 
-# 1. Asegurar que el directorio de configuración de greetd exista en la imagen
+# Creamos el script nativo que se ejecutará en la máquina del usuario una sola vez
+mkdir -p /usr/libexec
+cat << 'EOF' > /usr/libexec/kineticwe-firstboot-greeter
+#!/usr/bin/bash
+set -eu
+
+echo "[+] Iniciando configuración automatizada del Greeter..."
+
+# 1. Asegurar que las rutas existan de forma física en el disco real
 mkdir -p /etc/greetd
 
-# 2. Escribir directamente el archivo config.toml definitivo del greeter
-cat << 'EOF' > /etc/greetd/config.toml
+# 2. Escribir el archivo definitivo apuntando a Noctalia de forma limpia
+cat << 'GEOF' > /etc/greetd/config.toml
 [terminal]
 vt = 1
 
 [default_session]
 command = "/usr/bin/noctalia-greeter-session"
 user = "greeter"
-EOF
+GEOF
 
-# 3. Asegurar la presencia del usuario del greeter si el paquete de dnf no lo creó
+# 3. Crear el usuario del greeter con sus permisos multimedia si falta
 if ! id "greeter" &>/dev/null; then
-    echo "Creando usuario virtual del greeter..."
     useradd -M -r -s /sbin/nologin -d /var/lib/greetd -G video,input greeter || true
 fi
 
-# 4. Habilitar de forma inmutable el servicio del gestor de entrada en Systemd
-echo "Activando greetd.service en el inicio del sistema..."
-mkdir -p /etc/systemd/system/graphical.target.wants
-ln -sf /usr/lib/systemd/system/greetd.service /etc/systemd/system/graphical.target.wants/greetd.service
+# 4. Habilitar y arrancar greetd de forma nativa en caliente
+systemctl enable --now greetd.service || true
+
+echo "[+] Configuración del greeter finalizada con éxito."
+EOF
+
+chmod +x /usr/libexec/kineticwe-firstboot-greeter
+
+# Creamos la unidad de Systemd de ejecución única (oneshot) antes del entorno gráfico
+mkdir -p /usr/lib/systemd/system
+cat << 'EOF' > /usr/lib/systemd/system/kineticwe-setup-greeter.service
+[Unit]
+Description=Configuracion inicial automatica de KineticWE Greeter
+After=local-fs.target
+Before=display-manager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/kineticwe-firstboot-greeter
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Habilitamos únicamente el servicio de configuración inicial de forma segura
+mkdir -p /etc/systemd/system/multi-user.target.wants
+ln -sf /usr/lib/systemd/system/kineticwe-setup-greeter.service /etc/systemd/system/multi-user.target.wants/kineticowe-setup-greeter.service
