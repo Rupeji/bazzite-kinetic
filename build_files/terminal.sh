@@ -98,3 +98,62 @@ fi
 
 # Limpieza absoluta de rastros en la imagen
 rm -rf "$DIR_TEMPORAL"
+
+# =====================================================================
+# 6. Instalación de Temas Visuales Globales (Tela Icon y Bibata Cursors)
+# =====================================================================
+echo "Iniciando la instalación de Temas Visuales del sistema (Tela y Bibata)..."
+
+# Asegurar la ruta global nativa de iconos y cursores para el sistema operativo
+mkdir -p /usr/share/icons
+
+# ---------------------------------------------------------------------
+# 6.1. Instalación Global de Iconos Tela
+# ---------------------------------------------------------------------
+echo "Descargando e instalando la última versión de Tela Icon Theme..."
+rm -rf /tmp/Tela-icon-theme
+
+URL_TELA_CON_ESPACIOS="https:// github.com / vinceliuice / Tela-icon-theme .git"
+URL_TELA="${URL_TELA_CON_ESPACIOS// /}"
+
+git clone "$URL_TELA" /tmp/Tela-icon-theme
+
+# Ejecutamos el instalador oficial apuntando al directorio global /usr/share/icons
+if [ -f /tmp/Tela-icon-theme/install.sh ]; then
+    chmod +x /tmp/Tela-icon-theme/install.sh
+    /tmp/Tela-icon-theme/install.sh -d "/usr/share/icons"
+else
+    echo "Error: No se pudo descargar el instalador de iconos Tela."
+    exit 1
+fi
+
+rm -rf /tmp/Tela-icon-theme
+
+
+# ---------------------------------------------------------------------
+# 6.2. Instalación Global de Cursores Bibata Modern
+# ---------------------------------------------------------------------
+echo "Descargando e instalando la última versión de Cursores Bibata..."
+rm -f /tmp/Bibata-Modern-Classic.tar.xz /tmp/Bibata-Modern-Ice.tar.xz
+
+URL_CLASSIC_CON_ESPACIOS="https:// github.com / ful1e5 / Bibata_Cursor / releases / download / v2.0.7 / Bibata-Modern-Classic.tar.xz"
+URL_ICE_CON_ESPACIOS="https:// github.com / ful1e5 / Bibata_Cursor / releases / download / v2.0.7 / Bibata-Modern-Ice.tar.xz"
+
+URL_CLASSIC="${URL_CLASSIC_CON_ESPACIOS// /}"
+URL_ICE="${URL_ICE_CON_ESPACIOS// /}"
+
+curl -L "$URL_CLASSIC" -o /tmp/Bibata-Modern-Classic.tar.xz
+curl -L "$URL_ICE" -o /tmp/Bibata-Modern-Ice.tar.xz
+
+# Descomprimimos directamente en la ruta global de iconos del sistema (/usr/share/icons/)
+if [ -s /tmp/Bibata-Modern-Classic.tar.xz ] && [ -s /tmp/Bibata-Modern-Ice.tar.xz ]; then
+    tar -xf /tmp/Bibata-Modern-Classic.tar.xz -C "/usr/share/icons/"
+    tar -xf /tmp/Bibata-Modern-Ice.tar.xz -C "/usr/share/icons/"
+    echo "Cursores Bibata desempaquetados correctamente a nivel global."
+else
+    echo "Error: Los archivos de cursores descargados están corruptos o vacíos."
+    exit 1
+fi
+
+rm -f /tmp/Bibata-Modern-Classic.tar.xz /tmp/Bibata-Modern-Ice.tar.xz
+echo "¡Proceso de instalación estética finalizado con éxito!"
