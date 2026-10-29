@@ -119,4 +119,27 @@ fi
 # Limpieza de seguridad de archivos de sesión huérfanos que puedan provocar bucles
 rm -f /etc/skel/.wayland-session
 
+
+# 8. RECONSTRUCCIÓN FORZADA DE SESIÓN WAYLAND (Jaque Mate al Bucle de Login)
+# Reparamos la carpeta de sesiones que la purga masiva de KDE se llevó por delante
+mkdir -p /usr/share/wayland-sessions
+
+# Creamos a mano el lanzador oficial que greetd necesita para arrancar el escritorio de Don
+cat << 'EOF' | tee /usr/share/wayland-sessions/kineticwe.desktop >/dev/null
+[Desktop Entry]
+Name=KineticWE
+Comment=KineticWE Compositor with Noctalia Shell
+Exec=start-kineticwe
+Type=Application
+DesktopNames=KineticWE
+EOF
+
+chmod 644 /usr/share/wayland-sessions/kineticwe.desktop
+
+# Forzar a greetd a que su sesión por defecto sea explícitamente el cargador de Don
+if [ -f /etc/greetd/config.toml ]; then
+  sed 's/command = .*/command = "noctalia-greeter-session"/g' /etc/greetd/config.toml | tee /etc/greetd/config.toml.tmp >/dev/null
+  mv -f /etc/greetd/config.toml.tmp /etc/greetd/config.toml || true
+fi
+
 echo "=== CONFIGURACIÓN DEL SISTEMA COMPLETADA CON ÉXITO ==="
