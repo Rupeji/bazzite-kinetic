@@ -6,7 +6,7 @@ set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
 dnf5 copr enable theblackdon/kwee -y
-#dnf5 -y remove plasma-workspace plasma-* kde-*
+dnf5 -y remove plasma-workspace plasma-* kde-*
 
 # 2. Ejecutar Purga Masiva desde lista externa
 rm -f /usr/share/applications/waydroid-* /etc/sddm.conf
@@ -14,13 +14,18 @@ PAQUETES_BORRAR=$(grep -v '^#' "/ctx/paquetes_a_borrar.txt" | grep -v '^$' | tr 
 [ -n "${PAQUETES_BORRAR// /}" ] && dnf5 -y remove $PAQUETES_BORRAR
 
 
+# 3. Ejecutar Instalación Masiva desde lista externa
+PAQUETES_INSTALAR=$(grep -v '^#' "/ctx/paquetes_a_instalar.txt" | grep -v '^$' | tr '\n' ' ')
+[ -n "${PAQUETES_INSTALAR// /}" ] && dnf5 -y install $PAQUETES_INSTALAR
+
+
 ### 2. Instalar tu nuevo escritorio y tus aplicaciones del sistema
-dnf5 -y install \
-    kineticwe \
-    kineticwe-greeter \
-    firefox \
-    spectacle \
-    kitty
+#dnf5 -y install \
+#    kineticwe \
+#    kineticwe-greeter \
+#    firefox \
+#    spectacle \
+#    kitty
 
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
