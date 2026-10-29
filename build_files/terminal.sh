@@ -64,3 +64,37 @@ URL_FONTS_LIMPIA=$(echo "${DOMINIO_FONTS} / ${REPOSITORIO_FONTS} / ${ARCHIVO_FON
 curl -sSL "$URL_FONTS_LIMPIA" | tar -xJ -C /usr/share/fonts/jetbrains-mono-nerd/
 
 fc-cache -f -v
+# =====================================================================
+# 5. Descarga de Recursos Globales (Iconos y Wallpapers)
+# =====================================================================
+echo "Conectando con GitHub para descargar tu repositorio IconsWalls..."
+
+DIR_TEMPORAL="/tmp/git_iconswalls_backup"
+rm -rf "$DIR_TEMPORAL"
+
+echo "Clonando repositorio superficialmente (IconsWalls)..."
+if git clone --depth 1 https://github.com/Rupeji/IconsWalls "$DIR_TEMPORAL"; then
+    echo "Repositorio clonado correctamente."
+
+    # 1. Despliegue de los Iconos en el perfil global por defecto (/etc/skel)
+    if [ -d "$DIR_TEMPORAL/Iconos" ]; then
+        echo "Copiando Iconos al directorio global /etc/skel/.local/share/icons/..."
+        mkdir -p /etc/skel/.local/share/icons
+        cp -r "$DIR_TEMPORAL/Iconos"/* /etc/skel/.local/share/icons/
+    fi
+
+    # 2. Despliegue de los Wallpapers en la ruta nativa de fondos del sistema
+    if [ -d "$DIR_TEMPORAL/Wallpapers" ]; then
+        echo "Copiando Wallpapers a la ruta global del sistema /usr/share/backgrounds/..."
+        mkdir -p /usr/share/backgrounds
+        cp -r "$DIR_TEMPORAL/Wallpapers"/* /usr/share/backgrounds/
+    fi
+    
+    echo "¡Assets globales copiados con éxito!"
+else
+    echo "Error crítico: No se pudo clonar el repositorio de assets."
+    exit 1
+fi
+
+# Limpieza absoluta de rastros en la imagen
+rm -rf "$DIR_TEMPORAL"
