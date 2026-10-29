@@ -9,7 +9,6 @@ ARCHIVO_STARSHIP="install.sh"
 
 URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d ' ')
 
-# Tu método original de descarga
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
 
@@ -23,7 +22,6 @@ RUTA="/repos/$REPO/releases/latest"
 
 API_URL=$(echo "${PROTOCOLO}${DOMINIO}${RUTA}" | tr -d ' ')
 
-# Tu método original de extracción por API
 JSON_DATA=$(curl -s "$API_URL")
 URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' | grep '\.rpm$')
 
@@ -48,3 +46,18 @@ cp /ctx/starship.toml /etc/skel/.config/starship.toml
 cp /ctx/config.fish /etc/skel/.config/fish/config.fish
 
 chmod -R 755 /etc/skel/.config
+
+
+### 4. Instalar la tipografía oficial para los iconos de la consola (Ex-Sección 6)
+mkdir -p /usr/share/fonts/jetbrains-mono-nerd
+echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
+
+DOMINIO_FONTS="https://github.com"
+REPOSITORIO_FONTS="ryanoasis / nerd-fonts / releases / latest / download"
+ARCHIVO_FONTS="JetBrainsMono.tar.xz"
+
+URL_FONTS_LIMPIA=$(echo "${DOMINIO_FONTS} / ${REPOSITORIO_FONTS} / ${ARCHIVO_FONTS}" | tr -d ' ')
+
+curl -sSL "$URL_FONTS_LIMPIA" | tar -xJ -C /usr/share/fonts/jetbrains-mono-nerd/
+
+fc-cache -f -v
