@@ -19,7 +19,9 @@ dnf5 -y install \
     kineticwe \
     kineticwe-greeter \
     firefox \
+    spectacle \
     kitty
+
 
 ### 3. Descargar e instalar la ÚLTIMA versión de Starship Prompt a nivel global
 echo "Descargando e instalando Starship Prompt en el sistema..."
