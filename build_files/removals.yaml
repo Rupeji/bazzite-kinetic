@@ -1,0 +1,188 @@
+description: Remove Bazzite gaming apps, KDE desktop, and unwanted packages
+remove:
+  # Bazzite gaming apps (not needed for KineticWE)
+  - lutris
+  - waydroid
+  - waydroid-selinux
+  # On the NVIDIA base image waydroid-nvidia ships its own copies of the
+  # waydroid files/launcher, so removing waydroid alone leaves them behind.
+  - waydroid-nvidia
+  - waydroid-nvidia-selinux
+  - input-remapper
+  - cardwire
+  # Terra-stuff
+  - terra-mangohud
+  # Bazzite-specific tools
+  - uupd
+  - topgrade
+  - bazzite-portal
+  - bazzite-updater
+  # Microsoft Edit (TUI text editor)
+  - msedit
+  # Fcitx 5 input method stack
+  - fcitx5
+  - fcitx5-chewing
+  - fcitx5-chinese-addons
+  - fcitx5-chinese-addons-data
+  - fcitx5-configtool
+  - fcitx5-data
+  - fcitx5-gtk
+  - fcitx5-gtk3
+  - fcitx5-gtk4
+  - fcitx5-hangul
+  - fcitx5-libs
+  - fcitx5-libthai
+  - fcitx5-lua
+  - fcitx5-m17n
+  - fcitx5-mozc
+  - fcitx5-qt
+  - fcitx5-qt-libfcitx5qt6widgets
+  - fcitx5-qt-libfcitx5qtdbus
+  - fcitx5-qt-qt6gui
+  - fcitx5-qt5
+  - fcitx5-qt6
+  - fcitx5-sayura
+  - fcitx5-table-extra
+  - fcitx5-unikey
+  - kcm-fcitx5
+  # Bazaar storefront + KRunner plugin
+  - bazaar
+  - krunner-bazaar
+  # KDE Connect
+  - kde-connect
+  - kdeconnectd
+  - kde-connect-libs
+  # ROM Properties
+  - rom-propertiesi
+  - rom-properties-common
+  - rom-properties-kf6
+  - rom-properties-utils
+  # Mariadb (not needed)
+  - mariadb
+  - mariadb-server
+  - mariadb-common
+  - mariadb-errmsg
+  - mariadb-connector-c
+  - mariadb-connector-c-config
+  - mariadb-backup
+  - mariadb-cracklib-password-check
+  - mariadb-gssapi-server
+  # KDE Plasma Desktop (replaced by KineticWE)
+
+  - plasma-desktop
+  - plasma-workspace
+  - plasma-shell
+  - plasma-kwin_x11
+  - kwin
+  - kwin-x11
+  - kwin-wayland
+  - plasma-systemmonitor
+  - plasma-nano
+  - plasma-bigscreen
+  - plasma-browser-integration
+  - plasma-discover
+  - plasma-discover-flatpak
+  - plasma-pass
+  - plasma-pa
+  - plasma-desktoptheme
+  # `sddm` is deliberately NOT listed for removal: dnf drags it out as a
+  # dependent anyway (via `sddm-kcm`, and orphan cleanup), so the desktop
+  # variants still lose it, but the Steam Deck variant can reinstall it cleanly.
+  # Listing it here would make dcli-bootc's package verification fail on the
+  # deck build, which legitimately needs SDDM present.
+  - sddm-kcm
+  # KDE Apps (not needed)
+  #- ark
+  - gwenview
+  - elisa
+  - okular
+  - kcalc
+  - kontainer
+  - kalarm
+  - kolourpaint
+  - krecorder
+  - kmail
+  - neochat
+  # Optional KDE apps: removed from the image by default, but NOT dnf-excluded.
+  # Users can add any of them back at runtime with `sudo kinpkg install <pkg>`;
+  # the overlay records them and they survive image updates. Keep these out of
+  # `kineticwe.yaml`/other enabled modules, or the build will reinstall them.
+  # (konsole is deliberately not listed here: kineticwe keeps it installed.)
+  - krfb
+  - krdc
+  - kfind
+  - kwrite
+  # KDE Settings Modules
+  - kcmshell
+  - plasma-systemsettings
+  # Breeze theme (KineticWE has its own)
+  - plasma-breeze
+  - breeze-gtk
+# Bazzite's installer preinstalls these Flatpaks system-wide. They live in
+# /var/lib/flatpak (runtime state, not image content), so they can't be removed
+# at build time: this unit strips them on boot and records each app in the
+# stamp, so anything the user installs later is left alone.
+first_boot_services:
+  - name: kineticos-flatpak-removals.service
+    condition_path: /var/lib/kineticos/flatpak-removals.done
+    unit_content: |
+      [Unit]
+      Description=Remove unwanted Bazzite system Flatpaks (once per app)
+      ConditionPathExists=/usr/bin/flatpak
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/libexec/kineticos-remove-flatpaks
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+scripts:
+  pre: |
+
+    # Clean up leftover Bazzite/KDE files
+    rm -f /usr/share/applications/waydroid-container-restart.desktop
+    rm -f /usr/libexec/waydroid-container-restart \
+          /usr/libexec/waydroid-container-start \
+          /usr/libexec/waydroid-container-stop \
+          /usr/libexec/waydroid-fix-controllers
+    rm -rf /usr/share/applications/Waydroid
+    rm -f /usr/share/applications/discourse.desktop
+    rm -f /usr/share/applications/bazzite-documentation.desktop
+    rm -f /usr/share/applications/system-update.desktop
+    # NOTE: desktop entries are not deleted by hand here. `dnf remove` below
+    # erases every file owned by the packages it drops (including their
+    # .desktop entries), and leaving still-installed packages' launchers alone
+    # keeps `kinpkg install`/`reinstall` able to restore them.
+    # Remove SDDM config
+    rm -rf /etc/sddm.conf.d
+    rm -f /etc/sddm.conf
+  post: |
+    # Per-app Flatpak removal helper for kineticos-flatpak-removals.service.
+    # Each app is removed at most once: once processed it is recorded in the
+    # stamp, so a Flatpak the user installs later is left alone, while an app
+    # added to this list later still gets removed on the next boot. A missing
+    # app is stamped too, so fresh installs never re-remove user installs.
+    install -Dm0755 /dev/stdin /usr/libexec/kineticos-remove-flatpaks << 'EOF'
+    #!/usr/bin/bash
+    set -u
+    install -d /var/lib/kineticos
+    stamp=/var/lib/kineticos/flatpak-removals.done
+    touch "$stamp"
+    for app in \
+        io.github.DenysMb.Kontainer \
+        com.github.Matoking.protontricks \
+        org.kde.kcalc \
+        org.kde.okular \
+        org.mozilla.firefox \
+        org.kde.haruna \
+        org.kde.gwenview \
+        io.github.flattool.Warehouse \
+        com.github.tchx84.Flatseal \
+        org.gnome.Firmware
+    do
+        grep -qxF "$app" "$stamp" && continue
+        flatpak uninstall -y --system --noninteractive "$app" >/dev/null 2>&1 || true
+        echo "$app" >> "$stamp"
+    done
+    EOF
