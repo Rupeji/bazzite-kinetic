@@ -16,11 +16,8 @@ curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
 REPO="Nomadcxx/gSlapper"
-PROTOCOLO="https://"
-DOMINIO="://github.com"
-RUTA="/repos/$REPO/releases/latest"
-
-API_URL=$(echo "${PROTOCOLO}${DOMINIO}${RUTA}" | tr -d ' ')
+# Unificamos la URL en una sola línea limpia para evitar fallos de variables rotas
+API_URL=$(echo "https://github.com{REPO}/releases/latest" | tr -d ' ')
 
 JSON_DATA=$(curl -s "$API_URL")
 URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' | grep '\.rpm$')
@@ -48,7 +45,7 @@ cp /ctx/config.fish /etc/skel/.config/fish/config.fish
 chmod -R 755 /etc/skel/.config
 
 
-### 4. Instalar la tipografía oficial para los iconos de la consola (Ex-Sección 6)
+### 4. Instalar la tipografía oficial para los iconos de la consola
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 
