@@ -4,19 +4,16 @@ set -ouex pipefail
 
 echo "=== INICIANDO CONFIGURACIÓN MODULAR DEL SISTEMA ==="
 
-# 1. PARCHE DE REPOSITORIOS (Solución definitiva al Traceback de Anaconda)
-# Activamos Terra y Terra-Extras asegurando que Anaconda no crashee por falta de firmas GPG en la ISO
+# 1. PARCHE DE REPOSITORIOS (Fase de Compilación)
 if [ -f /etc/yum.repos.d/terra.repo ]; then
   sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/terra.repo
-  echo "gpgcheck=0" | tee -a /etc/yum.repos.d/terra.repo >/dev/null
 fi
 
 if [ -f /etc/yum.repos.d/terra-extras.repo ]; then
   sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/terra-extras.repo
-  echo "gpgcheck=0" | tee -a /etc/yum.repos.d/terra-extras.repo >/dev/null
 fi
 
-# Desactivamos terra-mesa para que el constructor de la ISO no choque contra su firma GPG local
+# Desactivamos terra-mesa para evitar choques criptográficos
 if [ -f /etc/yum.repos.d/terra-mesa.repo ]; then
   sed -i 's/^enabled=1$/enabled=0/' /etc/yum.repos.d/terra-mesa.repo
 fi
@@ -171,5 +168,11 @@ fi
 
 # Limpieza absoluta de rastros dentro del contenedor de la build
 rm -rf "$DIR_TEMPORAL"
+
+# 10. LIMPIEZA DE FIRMAS REPOSITORIOS (Jaque mate definitivo al Traceback de Anaconda)
+# Borramos los archivos .repo de Terra para que el instalador de la ISO nazca offline y estéril
+rm -f /etc/yum.repos.d/terra.repo
+rm -f /etc/yum.repos.d/terra-extras.repo
+rm -f /etc/yum.repos.d/terra-mesa.repo
 
 echo "=== CONFIGURACIÓN DEL SISTEMA COMPLETADA CON ÉXITO ==="
