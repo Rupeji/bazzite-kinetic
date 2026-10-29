@@ -4,3 +4,4 @@ kineticwe-greeter
 spectacle
 firefox
 kitty
+fish
