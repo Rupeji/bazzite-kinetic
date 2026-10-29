@@ -89,8 +89,8 @@ fi
 
 # Forzar la regeneración de grupos y asegurar los accesos de hardware para Noctalia
 mkdir -p /etc/sysusers.d
-echo "g video - -" > /etc/sysusers.d/video.conf
-echo "g input - -" > /etc/sysusers.d/input.conf
+echo "g video - -" | tee /etc/sysusers.d/video.conf >/dev/null
+echo "g input - -" | tee /etc/sysusers.d/input.conf >/dev/null
 systemd-sysusers || true
 usermod -aG video,input greeter || true
 
@@ -102,16 +102,21 @@ chown -R greeter:greeter /var/lib/greetd || true
 # Desactivar las restricciones de SELinux sobre el demonio de Greetd para evitar el os error 13
 if [ -d /etc/selinux ]; then
   mkdir -p /etc/systemd/system/greetd.service.d
-  printf '[Service]\nSecurityProfile=unconfined\n' > /etc/systemd/system/greetd.service.d/override.conf || true
+  printf '[Service]\nSecurityProfile=unconfined\n' | tee /etc/systemd/system/greetd.service.d/override.conf >/dev/null
 fi
 
 # 6. CONFIGURACIÓN REGIONAL EN LA RAÍZ (Teclado e idioma en español de fábrica)
-echo "KEYMAP=es" > /etc/vconsole.conf
-echo "LANG=es_ES.UTF-8" > /etc/locale.conf
+echo "KEYMAP=es" | tee /etc/vconsole.conf >/dev/null
+echo "LANG=es_ES.UTF-8" | tee /etc/locale.conf >/dev/null
 
-# 7. ENLACE DIRECTO DE SESIÓN (Rompemos el bucle de login)
-# Fuerza a que el entorno de greetd sepa exactamente que debe lanzar el escritorio de Don
-echo "kineticwe" > /etc/skel/.wayland-session
-chmod +x /etc/skel/.wayland-session
+# 7. ENLACE DIRECTO DE SESIÓN (Rompemos el bucle de login definitivo)
+# En lugar de usar sed directo que da error de apertura, usamos tee para parchear el config.toml si existe
+if [ -f /etc/greetd/config.toml ]; then
+  sed 's/command = .*/command = "noctalia-greeter-session"/g' /etc/greetd/config.toml | tee /etc/greetd/config.toml.tmp >/dev/null
+  mv -f /etc/greetd/config.toml.tmp /etc/greetd/config.toml || true
+fi
+
+# Limpieza de seguridad de archivos de sesión huérfanos que puedan provocar bucles
+rm -f /etc/skel/.wayland-session
 
 echo "=== CONFIGURACIÓN DEL SISTEMA COMPLETADA CON ÉXITO ==="
