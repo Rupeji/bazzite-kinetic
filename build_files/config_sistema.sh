@@ -121,15 +121,14 @@ rm -f /etc/skel/.wayland-session
 
 
 # 8. RECONSTRUCCIÓN FORZADA DE SESIÓN WAYLAND (Jaque Mate al Bucle de Login)
-# Reparamos la carpeta de sesiones que la purga masiva de KDE se llevó por delante
 mkdir -p /usr/share/wayland-sessions
 
-# Creamos a mano el lanzador oficial que greetd necesita para arrancar el escritorio de Don
+# Creamos a mano el lanzador oficial con la RUTA ABSOLUTA definitiva
 cat << 'EOF' | tee /usr/share/wayland-sessions/kineticwe.desktop >/dev/null
 [Desktop Entry]
 Name=KineticWE
 Comment=KineticWE Compositor with Noctalia Shell
-Exec=start-kineticwe
+Exec=/usr/bin/start-kineticwe
 Type=Application
 DesktopNames=KineticWE
 EOF
