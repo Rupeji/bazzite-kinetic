@@ -127,6 +127,7 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
+
 # =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo gregOS / KineticWE)
 # =====================================================================
@@ -134,10 +135,6 @@ echo "Desplegando archivo declarativo de sysusers para los grupos..."
 mkdir -p /usr/lib/sysusers.d
 cp /ctx/gregos-niri.conf /usr/lib/sysusers.d/gregos-niri.conf
 chmod 644 /usr/lib/sysusers.d/gregos-niri.conf
-
-# NOTA: systemd-sysusers y usermod NO se ejecutan aquí. 
-# El sistema se encargará de materializar de forma nativa al usuario 'greeter' 
-# durante el primer arranque real gracias a gregos-niri.conf.
 
 echo "Desplegando el Render Wrapper de seguridad para la gráfica..."
 mkdir -p /usr/libexec/gregos
@@ -149,19 +146,27 @@ mkdir -p /etc/greetd
 cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
-echo "Gestionando servicios de forma estática (Evitando systemctl disable/enable en el build)..."
-# 1. Creamos la ruta de los targets del sistema para multi-usuario si no existe
+echo "Gestionando servicios y targets de forma estática para bootc..."
 mkdir -p /usr/lib/systemd/system/multi-user.target.wants
+mkdir -p /usr/lib/systemd/system/graphical.target.wants
 
-# 2. Desactivamos SDDM borrando su enlace simbólico si existiera en la imagen base
+# Desactivar SDDM por completo
 rm -f /usr/lib/systemd/system/display-manager.service
 rm -f /usr/lib/systemd/system/multi-user.target.wants/sddm.service
 
-# 3. Activamos Greetd enlazándolo directamente al inicio del sistema
+# Activar greetd y el servicio de suspensión por inactividad de forma estática
 ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/display-manager.service
 ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/multi-user.target.wants/greetd.service
+# (Asumiendo que tienes el servicio greeter-idle-suspend en tu imagen, si no, elimina la línea de abajo)
+ln -sf /usr/lib/systemd/system/greeter-idle-suspend.service /usr/lib/systemd/system/graphical.target.wants/greeter-idle-suspend.service
 
-echo "Configuración del Greeter finalizada de forma estática."
-echo "Asegurando persistencia dinámica de /var para el greeter..."
+# Forzar el arranque en modo gráfico por defecto (Equivalente a systemctl set-default)
+ln -sf /usr/lib/systemd/system/graphical.target /usr/lib/systemd/system/default.target
+
+echo "Asegurando persistencia dinámica de /var y etiquetas SELinux al vuelo..."
 mkdir -p /usr/lib/tmpfiles.d
-echo "d /var/lib/noctalia-greeter 0750 greeter greeter - -" > /usr/lib/tmpfiles.d/noctalia-greeter.conf
+# Este comando crea la carpeta en el arranque con los permisos correctos Y le asigna la etiqueta 
+# SELinux 'xdm_var_lib_t' de forma nativa para que Noctalia pueda guardar su configuración sin bloqueos.
+echo "d /var/lib/noctalia-greeter 0750 greeter greeter - z:xdm_var_lib_t" > /usr/lib/tmpfiles.d/noctalia-greeter.conf
+
+echo "Configuración del Greeter finalizada con éxito."
