@@ -126,18 +126,3 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
-
-# =====================================================================
-# 7. Configuración automática y nativa del Greeter (KineticWE)
-# =====================================================================
-echo "Configurando de forma estática greetd para KineticWE..."
-mkdir -p /etc/greetd
-
-# Copiamos tu archivo pre-configurado al directorio del sistema
-cp /ctx/config.toml /etc/greetd/config.toml
-
-# Aseguramos los permisos necesarios para greetd
-chmod 644 /etc/greetd/config.toml
-
-# Habilitamos greetd para que sea el gestor de inicio predeterminado
-systemctl enable greetd.service
