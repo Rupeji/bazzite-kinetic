@@ -135,11 +135,9 @@ mkdir -p /usr/lib/sysusers.d
 cp /ctx/gregos-niri.conf /usr/lib/sysusers.d/gregos-niri.conf
 chmod 644 /usr/lib/sysusers.d/gregos-niri.conf
 
-echo "Disparando la creación y materialización real del usuario greeter..."
-systemd-sysusers
-
-echo "Asegurando permisos suplementarios en caliente por usermod..."
-/usr/sbin/usermod -aG video,input,render,seat greeter || true
+# NOTA: systemd-sysusers y usermod NO se ejecutan aquí. 
+# El sistema se encargará de materializar de forma nativa al usuario 'greeter' 
+# durante el primer arranque real gracias a gregos-niri.conf.
 
 echo "Desplegando el Render Wrapper de seguridad para la gráfica..."
 mkdir -p /usr/libexec/gregos
@@ -151,6 +149,16 @@ mkdir -p /etc/greetd
 cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
-echo "Apagando SDDM y activando Greetd de forma segura..."
-systemctl disable sddm.service || true
-systemctl enable greetd.service
+echo "Gestionando servicios de forma estática (Evitando systemctl disable/enable en el build)..."
+# 1. Creamos la ruta de los targets del sistema para multi-usuario si no existe
+mkdir -p /usr/lib/systemd/system/multi-user.target.wants
+
+# 2. Desactivamos SDDM borrando su enlace simbólico si existiera en la imagen base
+rm -f /usr/lib/systemd/system/display-manager.service
+rm -f /usr/lib/systemd/system/multi-user.target.wants/sddm.service
+
+# 3. Activamos Greetd enlazándolo directamente al inicio del sistema
+ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/display-manager.service
+ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/multi-user.target.wants/greetd.service
+
+echo "Configuración del Greeter finalizada de forma estática."
