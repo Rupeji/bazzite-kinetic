@@ -146,27 +146,32 @@ mkdir -p /etc/greetd
 cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
+echo "Desplegando y activando el servicio de suspensión por inactividad..."
+# Suponiendo que guardaste tu servicio como /ctx/greeter-idle-suspend.service
+mkdir -p /usr/lib/systemd/system
+cp /ctx/greeter-idle-suspend.service /usr/lib/systemd/system/greeter-idle-suspend.service
+chmod 644 /usr/lib/systemd/system/greeter-idle-suspend.service
+
 echo "Gestionando servicios y targets de forma estática para bootc..."
 mkdir -p /usr/lib/systemd/system/multi-user.target.wants
-mkdir -p /usr/lib/systemd/system/graphical.target.wants
+mkdir -p /usr/lib/systemd/system/greetd.service.wants
 
 # Desactivar SDDM por completo
 rm -f /usr/lib/systemd/system/display-manager.service
 rm -f /usr/lib/systemd/system/multi-user.target.wants/sddm.service
 
-# Activar greetd y el servicio de suspensión por inactividad de forma estática
+# Activar greetd enlazándolo directamente al inicio del sistema
 ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/display-manager.service
 ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/multi-user.target.wants/greetd.service
-# (Asumiendo que tienes el servicio greeter-idle-suspend en tu imagen, si no, elimina la línea de abajo)
-ln -sf /usr/lib/systemd/system/greeter-idle-suspend.service /usr/lib/systemd/system/graphical.target.wants/greeter-idle-suspend.service
+
+# Activar tu servicio de suspensión vinculándolo directamente a greetd
+ln -sf /usr/lib/systemd/system/greeter-idle-suspend.service /usr/lib/systemd/system/greetd.service.wants/greeter-idle-suspend.service
 
 # Forzar el arranque en modo gráfico por defecto (Equivalente a systemctl set-default)
 ln -sf /usr/lib/systemd/system/graphical.target /usr/lib/systemd/system/default.target
 
 echo "Asegurando persistencia dinámica de /var y etiquetas SELinux al vuelo..."
 mkdir -p /usr/lib/tmpfiles.d
-# Este comando crea la carpeta en el arranque con los permisos correctos Y le asigna la etiqueta 
-# SELinux 'xdm_var_lib_t' de forma nativa para que Noctalia pueda guardar su configuración sin bloqueos.
 echo "d /var/lib/noctalia-greeter 0750 greeter greeter - z:xdm_var_lib_t" > /usr/lib/tmpfiles.d/noctalia-greeter.conf
 
 echo "Configuración del Greeter finalizada con éxito."
