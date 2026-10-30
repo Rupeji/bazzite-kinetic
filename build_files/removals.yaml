@@ -13,10 +13,10 @@ remove:
   # Terra-stuff
   - terra-mangohud
   # Bazzite-specific tools
-  - uupd
-  - topgrade
+  #- uupd
+  #- topgrade
   - bazzite-portal
-  - bazzite-updater
+  #- bazzite-updater
   # Microsoft Edit (TUI text editor)
   - msedit
   # Fcitx 5 input method stack
