@@ -94,6 +94,30 @@ EOF
 mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-removals.service
 
+# =====================================================================
+# 5.1 Despliegue del Script Externo de Instalación de Flatpaks
+# =====================================================================
+echo "Desplegando servicio e instalando script helper de instalación de Flatpaks..."
+cp /ctx/install-flatpaks.sh /usr/libexec/kineticos-install-flatpaks
+chmod +x /usr/libexec/kineticos-install-flatpaks
+
+cat << 'EOF' > /usr/lib/systemd/system/kineticos-flatpak-installations.service
+[Unit]
+Description=Instalar Flatpaks del sistema declarados por el usuario
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/usr/bin/flatpak
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/kineticos-install-flatpaks
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+ln -sf /usr/lib/systemd/system/kineticos-flatpak-installations.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-installations.service
 
 # =====================================================================
 # 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
