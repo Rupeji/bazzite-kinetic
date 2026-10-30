@@ -128,49 +128,21 @@ mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
 # =====================================================================
-# 7. Despliegue del Configurador Automático del Greeter (Primer Boot)
+# 7. Configuración del Greeter Seguro (Estilo gregOS / KineticWE)
 # =====================================================================
-echo "Creando servicio de primer arranque para el greeter de KineticWE..."
+echo "Disparando la creación real del usuario greeter..."
+systemd-sysusers
 
-# Creamos el script ejecutable en el sistema
-cat << 'EOF' > /usr/libexec/kineticos-setup-greeter-once
-#!/bin/bash
-FLAG_FILE="/var/lib/kineticos/greeter-setup.done"
+echo "Desplegando el Render Wrapper de seguridad para la gráfica..."
+mkdir -p /usr/libexec/gregos
+cp /ctx/noctalia-greeter-render /usr/libexec/gregos/noctalia-greeter-render
+chmod +x /usr/libexec/gregos/noctalia-greeter-render
 
-# Si ya se ejecutó en el pasado, salir pacíficamente
-if [ -f "$FLAG_FILE" ]; then
-    exit 0
-fi
+echo "Configurando de forma estática greetd..."
+mkdir -p /etc/greetd
+cp /ctx/config.toml /etc/greetd/config.toml
+chmod 644 /etc/greetd/config.toml
 
-# Esperar un momento a que los servicios gráficos estén listos
-sleep 3
-
-# Ejecutar el comando oficial pasándole "y" de forma automática
-echo "y" | kineticwe-setup-greeter
-
-# Si el comando se ejecutó, crear la marca persistente
-mkdir -p /var/lib/kineticos
-touch "$FLAG_FILE"
-EOF
-
-chmod +x /usr/libexec/kineticos-setup-greeter-once
-
-# Creamos el servicio de systemd que lo lanzará tras la red y la gráfica
-cat << 'EOF' > /usr/lib/systemd/system/kineticos-greeter-boot.service
-[Unit]
-Description=Configurar KineticWE Greeter en el primer arranque
-After=network-online.target graphical.target
-Wants=network-online.target
-ConditionPathExists=!/var/lib/kineticos/greeter-setup.done
-
-[Service]
-Type=oneshot
-ExecStart=/usr/libexec/kineticos-setup-greeter-once
-RemainAfterExit=yes
-
-[Install]
-WantedBy=graphical.target
-EOF
-
-# Activamos el servicio para la ISO
-ln -sf /usr/lib/systemd/system/kineticos-greeter-boot.service /etc/systemd/system/graphical.target.wants/kineticos-greeter-boot.service
+echo "Apagando SDDM y activando Greetd de forma segura..."
+systemctl disable sddm.service || true
+systemctl enable greetd.service
