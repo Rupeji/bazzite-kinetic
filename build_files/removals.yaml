@@ -92,8 +92,8 @@ remove:
   # deck build, which legitimately needs SDDM present.
   - sddm-kcm
   # KDE Apps (not needed)
-  - ark
-  - gwenview
+  #- ark
+  #- gwenview
   - elisa
   - okular
   - kcalc
