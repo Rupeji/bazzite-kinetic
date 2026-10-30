@@ -7,3 +7,5 @@ kitty
 fish
 dolphin
 ark
+gwenview
+kate
