@@ -130,12 +130,16 @@ ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.
 # =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo gregOS / KineticWE)
 # =====================================================================
-echo "Disparando la creación real del usuario greeter..."
+echo "Desplegando archivo declarativo de sysusers para los grupos..."
+mkdir -p /usr/lib/sysusers.d
+cp /ctx/gregos-niri.conf /usr/lib/sysusers.d/gregos-niri.conf
+chmod 644 /usr/lib/sysusers.d/gregos-niri.conf
+
+echo "Disparando la creación y materialización real del usuario greeter..."
 systemd-sysusers
 
-# La solución mágica de la Parte 1 de Greg: Forzar los grupos de hardware
-echo "Asignando permisos de hardware al usuario greeter..."
-/usr/sbin/usermod -aG video,input,render greeter || true
+echo "Asegurando permisos suplementarios en caliente por usermod..."
+/usr/sbin/usermod -aG video,input,render,seat greeter || true
 
 echo "Desplegando el Render Wrapper de seguridad para la gráfica..."
 mkdir -p /usr/libexec/gregos
