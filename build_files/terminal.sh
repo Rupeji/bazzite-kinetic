@@ -76,11 +76,11 @@ echo "Clonando repositorio superficialmente (IconsWalls)..."
 if git clone --depth 1 https://github.com/Rupeji/IconsWalls "$DIR_TEMPORAL"; then
     echo "Repositorio clonado correctamente."
 
-    # 1. Despliegue de los Iconos en el perfil global por defecto (/etc/skel)
+    # 1. Despliegue de los Iconos en la plantilla editable del usuario (~/Pictures)
     if [ -d "$DIR_TEMPORAL/Iconos" ]; then
-        echo "Copiando Iconos al directorio global /etc/skel/.local/share/icons/..."
-        mkdir -p /etc/skel/.local/share/icons
-        cp -r "$DIR_TEMPORAL/Iconos"/* /etc/skel/.local/share/icons/
+        echo "Copiando Iconos a la plantilla editable /etc/skel/Pictures/Iconos/..."
+        mkdir -p /etc/skel/Pictures/Iconos
+        cp -r "$DIR_TEMPORAL/Iconos"/* /etc/skel/Pictures/Iconos/
     fi
 
     # 2. Despliegue de los Wallpapers en el directorio editable del usuario (~/Pictures)
