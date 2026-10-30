@@ -2,6 +2,5 @@
 vt = 2
 
 [default_session]
-command = "/usr/bin/noctalia-greeter-session -- --session Umbriel"
-# Fedora's greetd RPM owns this account; it is not called greeter here.
+command = "/usr/bin/noctalia-greeter-session -- --session KineticWE"
 user = "greetd"
