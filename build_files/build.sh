@@ -128,24 +128,49 @@ mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
 # =====================================================================
-# 7. Configuración automática y nativa del Greeter (KineticWE)
+# 7. Despliegue del Configurador Automático del Greeter (Primer Boot)
 # =====================================================================
-echo "Disparando la creación real del usuario greeter en los sysusers..."
-systemd-sysusers
+echo "Creando servicio de primer arranque para el greeter de KineticWE..."
 
-echo "Configurando de forma estática greetd para KineticWE..."
-mkdir -p /etc/greetd
+# Creamos el script ejecutable en el sistema
+cat << 'EOF' > /usr/libexec/kineticos-setup-greeter-once
+#!/bin/bash
+FLAG_FILE="/var/lib/kineticos/greeter-setup.done"
 
-# Copiamos tu archivo pre-configurado desde el contexto de build
-cp /ctx/config.toml /etc/greetd/config.toml
+# Si ya se ejecutó en el pasado, salir pacíficamente
+if [ -f "$FLAG_FILE" ]; then
+    exit 0
+fi
 
-# Aseguramos los permisos necesarios para greetd
-chmod 644 /etc/greetd/config.toml
+# Esperar un momento a que los servicios gráficos estén listos
+sleep 3
 
-# Apagamos SDDM de Bazzite para evitar la colisión gráfica
-echo "Deshabilitando el gestor de pantalla predeterminado de Bazzite..."
-systemctl disable sddm.service || true
+# Ejecutar el comando oficial pasándole "y" de forma automática
+echo "y" | kineticwe-setup-greeter
 
-# Habilitamos greetd como el gestor definitivo de la ISO
-echo "Habilitando greetd para KineticWE..."
-systemctl enable greetd.service
+# Si el comando se ejecutó, crear la marca persistente
+mkdir -p /var/lib/kineticos
+touch "$FLAG_FILE"
+EOF
+
+chmod +x /usr/libexec/kineticos-setup-greeter-once
+
+# Creamos el servicio de systemd que lo lanzará tras la red y la gráfica
+cat << 'EOF' > /usr/lib/systemd/system/kineticos-greeter-boot.service
+[Unit]
+Description=Configurar KineticWE Greeter en el primer arranque
+After=network-online.target graphical.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/kineticos/greeter-setup.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/kineticos-setup-greeter-once
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target
+EOF
+
+# Activamos el servicio para la ISO
+ln -sf /usr/lib/systemd/system/kineticos-greeter-boot.service /etc/systemd/system/graphical.target.wants/kineticos-greeter-boot.service
