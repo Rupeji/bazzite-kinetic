@@ -9,11 +9,19 @@ if command -v starship > /dev/null
 end
 
 # Alias útiles para gestionar Bazzite cómodamente
+abbr -a "actualizar flatpak" 'flatpak update -y'
+abbr -a "limpieza" 'flatpak uninstall --unused -y && sudo rpm-ostree cleanup -m'
+abbr -a "actualizar sistema" 'sudo rpm-ostree upgrade'
+abbr -a "actualizar todo" 'topgrade'
 
-abbr -a "actualizar flatpak" 'flatpak update -y' # Actualiza únicamente los Flatpaks de forma manual si tienes prisa
-abbr -a "limpieza" 'flatpak uninstall --unused -y && sudo rpm-ostree cleanup -m' # Limpieza profunda de residuos tanto de apps de usuario como del sistema de archivos atómico
-abbr -a "actualizar sistema" 'sudo rpm-ostree upgrade' # Descarga y prepara la última versión de tu ISO de GitHub (requiere reiniciar para aplicar)
-abbr -a "actualizar todo" 'topgrade' # Actualiza la ISO y todo lo demás que tenga instalado
+# Función para listar los comandos personalizados sin parámetros basura
+function comandos --description "Muestra la lista de alias personalizados y su explicación"
+    echo (set_color --bold blue)"=== COMANDOS PERSONALIZADOS KINETICOS ==="(set_color normal)
+    echo (set_color green)"actualizar flatpak "(set_color normal)": Actualiza únicamente los Flatpaks de forma manual si tienes prisa."
+    echo (set_color green)"limpieza           "(set_color normal)": Limpieza profunda de residuos tanto de apps de usuario como del sistema."
+    echo (set_color green)"actualizar sistema "(set_color normal)": Descarga y prepara la última versión de tu ISO de GitHub (requiere reiniciar)."
+    echo (set_color green)"actualizar todo    "(set_color normal)": Actualiza la ISO y todo lo demás que tenga instalado de un solo golpe."
+end
 
 # Ejecutar Fastfetch al abrir la terminal si está instalado
 if command -v fastfetch > /dev/null
