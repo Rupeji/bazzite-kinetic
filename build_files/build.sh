@@ -133,6 +133,10 @@ ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.
 echo "Disparando la creación real del usuario greeter..."
 systemd-sysusers
 
+# La solución mágica de la Parte 1 de Greg: Forzar los grupos de hardware
+echo "Asignando permisos de hardware al usuario greeter..."
+/usr/sbin/usermod -aG video,input,render greeter || true
+
 echo "Desplegando el Render Wrapper de seguridad para la gráfica..."
 mkdir -p /usr/libexec/gregos
 cp /ctx/noctalia-greeter-render /usr/libexec/gregos/noctalia-greeter-render
