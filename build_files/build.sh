@@ -126,3 +126,26 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
+
+# =====================================================================
+# 7. Configuración automática y nativa del Greeter (KineticWE)
+# =====================================================================
+echo "Disparando la creación real del usuario greeter en los sysusers..."
+systemd-sysusers
+
+echo "Configurando de forma estática greetd para KineticWE..."
+mkdir -p /etc/greetd
+
+# Copiamos tu archivo pre-configurado desde el contexto de build
+cp /ctx/config.toml /etc/greetd/config.toml
+
+# Aseguramos los permisos necesarios para greetd
+chmod 644 /etc/greetd/config.toml
+
+# Apagamos SDDM de Bazzite para evitar la colisión gráfica
+echo "Deshabilitando el gestor de pantalla predeterminado de Bazzite..."
+systemctl disable sddm.service || true
+
+# Habilitamos greetd como el gestor definitivo de la ISO
+echo "Habilitando greetd para KineticWE..."
+systemctl enable greetd.service
