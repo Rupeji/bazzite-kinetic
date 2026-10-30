@@ -162,3 +162,6 @@ ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/display-ma
 ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/multi-user.target.wants/greetd.service
 
 echo "Configuración del Greeter finalizada de forma estática."
+echo "Asegurando persistencia dinámica de /var para el greeter..."
+mkdir -p /usr/lib/tmpfiles.d
+echo "d /var/lib/noctalia-greeter 0750 greeter greeter - -" > /usr/lib/tmpfiles.d/noctalia-greeter.conf
