@@ -128,51 +128,22 @@ mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
 # =====================================================================
-# 7. Configuración del Greeter Seguro (Estilo gregOS / KineticWE)
+# 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
 # =====================================================================
-echo "Desplegando archivo declarativo de sysusers para los grupos..."
-mkdir -p /usr/lib/sysusers.d
-cp /ctx/gregos-niri.conf /usr/lib/sysusers.d/gregos-niri.conf
-chmod 644 /usr/lib/sysusers.d/gregos-niri.conf
+echo "Desplegando parche de tmpfiles y SELinux para greetd..."
+mkdir -p /usr/lib/tmpfiles.d
+cp /ctx/bazzite-kinetic-tmpfiles.conf /usr/lib/tmpfiles.d/bazzite-kinetic-tmpfiles.conf
+chmod 644 /usr/lib/tmpfiles.d/bazzite-kinetic-tmpfiles.conf
 
-echo "Configurando de forma estática greetd..."
+echo "Configurando de forma estática el archivo de greetd..."
 mkdir -p /etc/greetd
 cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
-echo "Desplegando y activando el servicio de suspensión por inactividad..."
-# 1. Copiar el ejecutable del servicio a /usr/libexec y darle permisos de ejecución
-mkdir -p /usr/libexec
-cp /ctx/greeter-idle-suspend /usr/libexec/greeter-idle-suspend
-chmod +x /usr/libexec/greeter-idle-suspend
+echo "Aplicando directivas de contexto SELinux sobre el almacenamiento..."
+semanage fcontext -a -t xdm_var_lib_t '/var/lib/noctalia-greeter(/.*)?' || true
 
-# 2. Copiar el archivo del servicio systemd
-mkdir -p /usr/lib/systemd/system
-cp /ctx/greeter-idle-suspend.service /usr/lib/systemd/system/greeter-idle-suspend.service
-chmod 644 /usr/lib/systemd/system/greeter-idle-suspend.service
-
-echo "Gestionando servicios y targets de forma estática para bootc..."
-mkdir -p /usr/lib/systemd/system/multi-user.target.wants
-mkdir -p /usr/lib/systemd/system/greetd.service.wants
-
-# Desactivar SDDM por completo
-rm -f /usr/lib/systemd/system/display-manager.service
-rm -f /usr/lib/systemd/system/multi-user.target.wants/sddm.service
-
-# Activar greetd enlazándolo directamente al inicio del sistema
-ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/display-manager.service
-ln -sf /usr/lib/systemd/system/greetd.service /usr/lib/systemd/system/multi-user.target.wants/greetd.service
-
-# Activar tu servicio de suspensión vinculándolo directamente a greetd
-ln -sf /usr/lib/systemd/system/greeter-idle-suspend.service /usr/lib/systemd/system/greetd.service.wants/greeter-idle-suspend.service
-
-# Forzar el arranque en modo gráfico por defecto (Equivalente a systemctl set-default)
-ln -sf /usr/lib/systemd/system/graphical.target /usr/lib/systemd/system/default.target
-
-echo "Asegurando persistencia dinámica de /var y etiquetas SELinux al vuelo..."
-mkdir -p /usr/lib/tmpfiles.d
-# Forzamos la creación del directorio oficial de Noctalia Greeter asignado al usuario 'greetd' 
-# y con el tipo SELinux correcto para evitar que bloquee la sincronización de temas y sesiones.
-echo "d /var/lib/noctalia-greeter 0750 greetd greetd - z:xdm_var_lib_t" > /usr/lib/tmpfiles.d/noctalia-greeter.conf
-
-echo "Configuración del Greeter finalizada con éxito."
+echo "Apagando el gestor nativo de Bazzite y activando greetd..."
+systemctl disable sddm.service || true
+systemctl enable greetd.service
+systemctl set-default graphical.target
