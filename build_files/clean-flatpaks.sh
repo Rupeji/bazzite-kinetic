@@ -10,14 +10,14 @@ touch "$stamp"
 
 for app in \
     io.github.DenysMb.Kontainer \
-    com.github.Matoking.protontricks \
+    #com.github.Matoking.protontricks \
     org.kde.kcalc \
     org.kde.okular \
     org.mozilla.firefox \
     org.kde.haruna \
     org.kde.gwenview \
-    io.github.flattool.Warehouse \
-    com.github.tchx84.Flatseal \
+    #io.github.flattool.Warehouse \
+    #com.github.tchx84.Flatseal \
     org.gnome.Firmware
 do
     # Si la app ya se procesó en el pasado, saltar a la siguiente
