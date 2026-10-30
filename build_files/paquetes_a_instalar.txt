@@ -5,6 +5,5 @@ spectacle
 firefox
 kitty
 fish
-thunar
-thunar-archive-plugin
-file-roller
+Dolphin
+Ark
