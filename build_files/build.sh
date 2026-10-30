@@ -127,7 +127,6 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
-
 # =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo gregOS / KineticWE)
 # =====================================================================
@@ -135,11 +134,6 @@ echo "Desplegando archivo declarativo de sysusers para los grupos..."
 mkdir -p /usr/lib/sysusers.d
 cp /ctx/gregos-niri.conf /usr/lib/sysusers.d/gregos-niri.conf
 chmod 644 /usr/lib/sysusers.d/gregos-niri.conf
-
-echo "Desplegando el Render Wrapper de seguridad para la gráfica..."
-mkdir -p /usr/libexec/gregos
-cp /ctx/noctalia-greeter-render /usr/libexec/gregos/noctalia-greeter-render
-chmod +x /usr/libexec/gregos/noctalia-greeter-render
 
 echo "Configurando de forma estática greetd..."
 mkdir -p /etc/greetd
@@ -177,6 +171,8 @@ ln -sf /usr/lib/systemd/system/graphical.target /usr/lib/systemd/system/default.
 
 echo "Asegurando persistencia dinámica de /var y etiquetas SELinux al vuelo..."
 mkdir -p /usr/lib/tmpfiles.d
-echo "d /var/lib/noctalia-greeter 0750 greeter greeter - z:xdm_var_lib_t" > /usr/lib/tmpfiles.d/noctalia-greeter.conf
+# Forzamos la creación del directorio oficial de Noctalia Greeter asignado al usuario 'greetd' 
+# y con el tipo SELinux correcto para evitar que bloquee la sincronización de temas y sesiones.
+echo "d /var/lib/noctalia-greeter 0750 greetd greetd - z:xdm_var_lib_t" > /usr/lib/tmpfiles.d/noctalia-greeter.conf
 
 echo "Configuración del Greeter finalizada con éxito."
