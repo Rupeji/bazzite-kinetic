@@ -147,7 +147,12 @@ cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
 echo "Desplegando y activando el servicio de suspensión por inactividad..."
-# Suponiendo que guardaste tu servicio como /ctx/greeter-idle-suspend.service
+# 1. Copiar el ejecutable del servicio a /usr/libexec y darle permisos de ejecución
+mkdir -p /usr/libexec
+cp /ctx/greeter-idle-suspend /usr/libexec/greeter-idle-suspend
+chmod +x /usr/libexec/greeter-idle-suspend
+
+# 2. Copiar el archivo del servicio systemd
 mkdir -p /usr/lib/systemd/system
 cp /ctx/greeter-idle-suspend.service /usr/lib/systemd/system/greeter-idle-suspend.service
 chmod 644 /usr/lib/systemd/system/greeter-idle-suspend.service
