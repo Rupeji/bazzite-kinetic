@@ -12,22 +12,33 @@ URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP} / ${ARCHIVO_STARSHIP}" | tr -d '
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 
 
-### 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
+# =====================================================================
+# 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm) desde GitHub
+# =====================================================================
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
 REPO="Nomadcxx/gSlapper"
-BASE_API="https://api.github.com"  # <- Corregido aquí para usar el subdominio api
+BASE_API="https://api.github.com"
 RUTA_API="/repos/$REPO/releases/latest"
 
 # Usamos tu truco de espacios infalible con las variables de la API correctas
 API_URL=$(echo "${BASE_API} ${RUTA_API}" | tr -d ' ')
 
-# Obtener la información de la release y extraer el enlace .rpm de forma segura
-JSON_DATA=$(curl -s "$API_URL")
+# Obtener la información de la release usando el token si está disponible para evitar el Rate Limit
+if [ -n "$GITHUB_TOKEN" ]; then
+    echo "Usando GITHUB_TOKEN para autenticar la petición a la API..."
+    JSON_DATA=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "$API_URL")
+else
+    echo "Aviso: GITHUB_TOKEN no detectado, haciendo petición pública..."
+    JSON_DATA=$(curl -s "$API_URL")
+fi
+
+# Extraer el enlace .rpm de forma segura
 URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' | grep '\.rpm$')
 
 if [ -z "$URL_RPM" ]; then
     echo "Error: No se pudo encontrar un paquete .rpm en la última versión de gSlapper."
+    echo "Respuesta de la API recibida: $JSON_DATA"
     exit 1
 fi
 
