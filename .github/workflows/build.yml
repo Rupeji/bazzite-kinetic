@@ -5,7 +5,8 @@ on:
     branches:
       - main
   schedule:
-    - cron: '40 8 * * 6'
+    # 7:40 AM UTC equivale a las 8:40 AM en España (Horario de invierno)
+    - cron: '40 7 * * 6'
   push:
     branches:
       - main
