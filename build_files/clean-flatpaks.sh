@@ -15,7 +15,7 @@ for app in \
     org.kde.okular \
     org.mozilla.firefox \
     org.kde.haruna \
-    org.kde.gwenview \
+    #org.kde.gwenview \
     #io.github.flattool.Warehouse \
     #com.github.tchx84.Flatseal \
     org.gnome.Firmware
