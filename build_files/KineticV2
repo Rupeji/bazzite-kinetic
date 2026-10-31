@@ -8,9 +8,9 @@ dnf5 -y remove plasma-workspace plasma-* kde-*
 
 
 # =====================================================================
-# 2. Scripts PRE-remoción y purga masiva desde removals.yaml
+# 2. Scripts PRE-borradon y purga masiva desde removals.yaml
 # =====================================================================
-echo "Ejecutando limpiezas de archivos PRE-remoción..."
+echo "Ejecutando limpiezas de archivos PRE-borrado..."
 rm -f /usr/share/applications/waydroid-* /etc/sddm.conf
 rm -f /usr/share/applications/waydroid-container-restart.desktop
 rm -f /usr/libexec/waydroid-container-restart \
@@ -94,6 +94,30 @@ EOF
 mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-removals.service
 
+# =====================================================================
+# 5.1 Despliegue del Script Externo de Instalación de Flatpaks
+# =====================================================================
+echo "Desplegando servicio e instalando script helper de instalación de Flatpaks..."
+cp /ctx/install-flatpaks.sh /usr/libexec/kineticos-install-flatpaks
+chmod +x /usr/libexec/kineticos-install-flatpaks
+
+cat << 'EOF' > /usr/lib/systemd/system/kineticos-flatpak-installations.service
+[Unit]
+Description=Instalar Flatpaks del sistema declarados por el usuario
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/usr/bin/flatpak
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/kineticos-install-flatpaks
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+ln -sf /usr/lib/systemd/system/kineticos-flatpak-installations.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-installations.service
 
 # =====================================================================
 # 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
@@ -102,3 +126,24 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
+
+# =====================================================================
+# 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
+# =====================================================================
+echo "Desplegando parche de tmpfiles y SELinux para greetd..."
+mkdir -p /usr/lib/tmpfiles.d
+cp /ctx/bazzite-kinetic-tmpfiles.conf /usr/lib/tmpfiles.d/bazzite-kinetic-tmpfiles.conf
+chmod 644 /usr/lib/tmpfiles.d/bazzite-kinetic-tmpfiles.conf
+
+echo "Configurando de forma estática el archivo de greetd..."
+mkdir -p /etc/greetd
+cp /ctx/config.toml /etc/greetd/config.toml
+chmod 644 /etc/greetd/config.toml
+
+echo "Aplicando directivas de contexto SELinux sobre el almacenamiento..."
+semanage fcontext -a -t xdm_var_lib_t '/var/lib/noctalia-greeter(/.*)?' || true
+
+echo "Apagando el gestor nativo de Bazzite y activando greetd..."
+systemctl disable sddm.service || true
+systemctl enable greetd.service
+systemctl set-default graphical.target
