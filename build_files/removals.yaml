@@ -93,7 +93,7 @@ remove:
   - sddm-kcm
   # KDE Apps (not needed)
   - ark
-  #- gwenview
+  - gwenview
   - elisa
   - okular
   - kcalc
