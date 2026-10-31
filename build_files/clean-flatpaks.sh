@@ -10,7 +10,7 @@ touch "$stamp"
 
 for app in \
     io.github.DenysMb.Kontainer \
-    #com.github.Matoking.protontricks \
+    com.github.Matoking.protontricks \
     org.kde.kcalc \
     org.kde.okular \
     org.mozilla.firefox \
