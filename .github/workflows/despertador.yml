@@ -1,0 +1,25 @@
+name: Bot Despertador
+on:
+  schedule:
+    # Programado para las 09:47 AM de España (08:47 UTC)
+    - cron: '47 8 * * 6'
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Modificar archivo ping
+        run: |
+          echo "Último intento: $(date)" > ping.txt
+          
+      - name: Commit y Push del Bot
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add ping.txt
+          git commit -m "bot: forzando compilación de bazzite" || exit 0
+          git push
