@@ -1,8 +1,8 @@
 name: Bot Despertador
 on:
   schedule:
-    # Programado para las 09:47 AM de España (08:47 UTC)
-    - cron: '5 9 * * 6'
+    # 6:05 AM UTC equivale a las 7:05 AM en España (Horario de invierno)
+    - cron: '5 6 * * 6'
 
 jobs:
   ping:
