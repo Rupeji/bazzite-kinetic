@@ -4,25 +4,25 @@ on:
     branches:
       - main
   schedule:
-    # Se ejecuta todos los sábados a las 08:00 AM UTC
-    - cron: '15 8 * * 6'
+    # Se ejecutará automáticamente todos los sábados a las 08:35 AM UTC
+    - cron: '35 8 * * 6'
   push:
     branches:
       - main
     paths-ignore:
       - '**/README.md'
+      - 'build_date.txt'
   workflow_dispatch:
 
 env:
   IMAGE_DESC: "My Customized Universal Blue Image"
   IMAGE_KEYWORDS: "bootc,ublue,universal-blue"
-  IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/120078124?s=200&v=4"
+  IMAGE_LOGO_URL: "https://githubusercontent.com"
   IMAGE_NAME: "${{ github.event.repository.name }}"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
 
 concurrency:
-  # Corregido: Agrupa por flujo y rama para evitar fallos de inputs vacíos
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
@@ -32,19 +32,31 @@ jobs:
     runs-on: ubuntu-24.04
 
     permissions:
-      contents: read
-      packages: write
+      contents: write   # Necesario para guardar el registro de la build
+      packages: write   # Necesario para publicar en GHCR
       id-token: write
 
     steps:
       - name: Prepare environment
         run: |
-          # Lowercase the image uri
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # NUEVO: Si la tarea se ejecuta por tiempo (cron), actualiza el archivo para marcar actividad
+      - name: Mantener repositorio activo (Keepalive)
+        if: github.event_name == 'schedule'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          echo "Última compilación automática realizada el: $(date -u)" > build_date.txt
+          git add build_date.txt
+          git commit -m "Compilación semanal automática: $(date -u)"
+          git push origin main
 
       - name: Mount BTRFS for podman storage
         uses: ublue-os/container-storage-action@main
@@ -65,13 +77,13 @@ jobs:
             type=sha,enable=${{ github.event_name == 'pull_request' }}
             type=ref,event=pr
           labels: |
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/refs/heads/main/README.md
+            io.artifacthub.package.readme-url=https://githubusercontent.com{{ github.repository_owner }}/${{ env.IMAGE_NAME }}/refs/heads/main/README.md
             org.opencontainers.image.created=${{ steps.date.outputs.date }}
             org.opencontainers.image.description=${{ env.IMAGE_DESC }}
-            org.opencontainers.image.documentation=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/refs/heads/main/README.md
-            org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/main/Containerfile
+            org.opencontainers.image.documentation=https://githubusercontent.com{{ github.repository_owner }}/${{ env.IMAGE_NAME }}/refs/heads/main/README.md
+            org.opencontainers.image.source=https://github.com{{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/main/Containerfile
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+            org.opencontainers.image.url=https://github.com{{ github.repository_owner }}/${{ env.IMAGE_NAME }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
             io.artifacthub.package.deprecated=false
@@ -96,7 +108,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
-        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -104,7 +116,7 @@ jobs:
 
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
-        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        if: github.event_name != 'pull_request'
         id: push
         env:
           REGISTRY_USER: ${{ github.actor }}
