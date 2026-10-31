@@ -5,12 +5,9 @@ spectacle
 firefox
 kitty
 fish
-ristretto
-mousepad
+dolphin
+ark
+gwenview
+kate
 polkit-kde
 mediawriter
-thunar
-thunar-archive-plugin
-file-roller
-tumbler
-gvfs
