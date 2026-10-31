@@ -5,7 +5,7 @@ on:
       - main
   schedule:
     # Se ejecutará automáticamente todos los sábados a las 08:35 AM UTC
-    - cron: '35 8 * * 6'
+    - cron: '47 8 * * 6'
   push:
     branches:
       - main
