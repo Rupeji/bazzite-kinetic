@@ -5,8 +5,8 @@ spectacle
 firefox
 kitty
 fish
-gwenview
-kate
+ristretto
+mousepad
 polkit-kde
 mediawriter
 thunar
