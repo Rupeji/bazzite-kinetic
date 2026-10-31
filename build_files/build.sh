@@ -127,6 +127,26 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
+
+# =====================================================================
+# Parche de Autostart para Agente de Autenticación Polkit en KineticWE Esto es para grabar ISOS, si no va, quitar poolkit de los paquetes y este codigo
+# =====================================================================
+echo "Configurando el inicio automático del agente Polkit (KF6) para KineticWE..."
+mkdir -p /usr/share/autostart
+cat << 'EOF' > /usr/share/autostart/polkit-kde-authentication-agent-1.desktop
+[Desktop Entry]
+Type=Application
+Name=KDE Polkit Authentication Agent
+Comment=Motor de contraseñas de administrador para apps gráficas
+Exec=/usr/libexec/kf6/polkit-kde-authentication-agent-1
+X-UDEV-SysName=polkit-kde-authentication-agent-1
+OnlyShowIn=X-KineticWE;KineticWE;
+X-KDE-Autostart-phase=1
+Terminal=false
+EOF
+chmod 644 /usr/share/autostart/polkit-kde-authentication-agent-1.desktop
+
+
 # =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
 # =====================================================================
