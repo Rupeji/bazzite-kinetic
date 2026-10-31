@@ -4,8 +4,8 @@ on:
     branches:
       - main
   schedule:
-    # Programado para los sábados a las 08:50 AM UTC
-    - cron: '54 8 * * 6'
+    # Ajustado a las 09:05 AM UTC para dar margen de registro al planificador
+    - cron: '5 9 * * 6'
   push:
     branches:
       - main
@@ -50,7 +50,7 @@ jobs:
       - name: Mantener repositorio activo (Keepalive)
         if: github.event_name == 'schedule'
         run: |
-          git config --local user.email "github-actions[bot]@://github.com"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           echo "Última compilación automática realizada el: $(date -u)" > build_date.txt
           git add build_date.txt
@@ -65,7 +65,7 @@ jobs:
         run: |
           echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> $GITHUB_OUTPUT
 
-      # Genera los tags necesarios para el empaquetado OCI
+      # Genera los tags necesarios para el empaquetado OCI con URLs corregidas
       - name: Image Metadata
         uses: docker/metadata-action@v5
         id: metadata
@@ -114,7 +114,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Sube la ISO/imagen resultante a tu registro para que la puedas descargar en tu Bazzite
+      # Sube la imagen empaquetada OCI a GHCR
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
         if: github.event_name != 'pull_request'
