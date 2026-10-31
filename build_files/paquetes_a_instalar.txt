@@ -10,3 +10,4 @@ ark
 gwenview
 kate
 polkit-kde
+mediawriter
