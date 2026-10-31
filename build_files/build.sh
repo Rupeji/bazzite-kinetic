@@ -129,22 +129,25 @@ ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.
 
 
 # =====================================================================
-# Parche de Autostart para Agente de Autenticación Polkit en KineticWE Esto es para grabar ISOS, si no va, quitar poolkit de los paquetes y este codigo
+# Parche de Autostart para Agente de Autenticación Polkit en KineticWE
 # =====================================================================
-echo "Configurando el inicio automático del agente Polkit (KF6) para KineticWE..."
-mkdir -p /usr/share/autostart
-cat << 'EOF' > /usr/share/autostart/polkit-kde-authentication-agent-1.desktop
+echo "Configurando el inicio automático del agente Polkit (KF6) en la ruta XDG estándar..."
+
+# Crear el directorio estándar de autostart del sistema (global)
+mkdir -p /etc/xdg/autostart
+
+cat << 'EOF' > /etc/xdg/autostart/polkit-kde-authentication-agent-1.desktop
 [Desktop Entry]
 Type=Application
 Name=KDE Polkit Authentication Agent
 Comment=Motor de contraseñas de administrador para apps gráficas
 Exec=/usr/libexec/kf6/polkit-kde-authentication-agent-1
-X-UDEV-SysName=polkit-kde-authentication-agent-1
-OnlyShowIn=X-KineticWE;KineticWE;
-X-KDE-Autostart-phase=1
 Terminal=false
+X-KDE-Autostart-phase=1
 EOF
-chmod 644 /usr/share/autostart/polkit-kde-authentication-agent-1.desktop
+
+# Asignar permisos correctos de lectura global para el sistema
+chmod 644 /etc/xdg/autostart/polkit-kde-authentication-agent-1.desktop
 
 
 # =====================================================================
