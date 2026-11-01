@@ -21,6 +21,7 @@ function comandos --description "Muestra la lista de alias personalizados y su e
     echo (set_color green)"actualizar-flatpak "(set_color normal)": Actualiza únicamente los Flatpaks de forma manual si tienes prisa."
     echo (set_color green)"limpieza           "(set_color normal)": Limpieza profunda de residuos tanto de apps de usuario como del sistema."
     echo (set_color green)"actualizar-sistema "(set_color normal)": Descarga y prepara la última versión de tu ISO de GitHub (requiere reiniciar)."
+    echo (set_color green)"limpiar-actualizacion-fallida "(set_color normal)": Soluciona el problema si falla la actualización y permite continuar la descarga donde se quedó."
     echo (set_color green)"actualizar-todo    "(set_color normal)": Actualiza la ISO y todo lo demás que tenga instalado de un solo golpe."
 end
 
