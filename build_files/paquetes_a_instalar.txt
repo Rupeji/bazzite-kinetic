@@ -13,7 +13,7 @@ fish
 loupe
 gnome-text-editor
 gnome-screenshot
-polkit-gnome
+mate-polkit
 mediawriter
 nemo
 nemo-fileroller
