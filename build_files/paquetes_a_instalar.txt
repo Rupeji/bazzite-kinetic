@@ -1,14 +1,18 @@
 # === ENTORNO GRÁFICO KINETICWE + SPECTACLE + FIREFOX + KITTY ===
 kineticwe
 kineticwe-greeter
-spectacle
+#Estos Son de KDE
+#spectacle
+#dolphin
+#ark
+#gwenview
+#kate
 firefox
 kitty
 fish
-#dolphin
-#ark
-gwenview
-kate
+loupe
+gnome-text-editor
+grimshot
 polkit-kde
 mediawriter
 nemo
