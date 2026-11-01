@@ -17,7 +17,7 @@ abbr -a actualizar-todo    'topgrade'
 
 # Función para listar los comandos personalizados
 function comandos --description "Muestra la lista de alias personalizados y su explicación"
-    echo (set_color --bold blue)"=== COMANDOS PERSONALIZADOS KINETICOS ==="(set_color normal)
+    echo (set_color --bold blue)"=== COMANDOS PERSONALIZADOS ==="(set_color normal)
     echo (set_color green)"actualizar-flatpak "(set_color normal)": Actualiza únicamente los Flatpaks de forma manual si tienes prisa."
     echo (set_color green)"limpieza           "(set_color normal)": Limpieza profunda de residuos tanto de apps de usuario como del sistema."
     echo (set_color green)"actualizar-sistema "(set_color normal)": Descarga y prepara la última versión de tu ISO de GitHub (requiere reiniciar)."
