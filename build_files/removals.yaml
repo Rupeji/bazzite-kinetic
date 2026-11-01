@@ -68,7 +68,6 @@ remove:
   - mariadb-cracklib-password-check
   - mariadb-gssapi-server
   # KDE Plasma Desktop (replaced by KineticWE)
-
   - plasma-desktop
   - plasma-workspace
   - plasma-shell
@@ -93,7 +92,7 @@ remove:
   - sddm-kcm
   # KDE Apps (not needed)
   - ark
-  #- gwenview
+  - gwenview
   - elisa
   - okular
   - kcalc
