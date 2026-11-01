@@ -12,7 +12,7 @@ kitty
 fish
 loupe
 gnome-text-editor
-gnome-screenshot
+ksnip
 mate-polkit
 mediawriter
 nemo
