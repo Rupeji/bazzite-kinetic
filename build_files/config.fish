@@ -12,6 +12,7 @@ end
 abbr -a actualizar-flatpak 'flatpak update -y'
 abbr -a limpieza           'flatpak uninstall --unused -y && sudo rpm-ostree cleanup -m'
 abbr -a actualizar-sistema 'sudo rpm-ostree upgrade'
+abbr -a limpiar-actualizacion-fallida 'sudo rpm-ostree cleanup --repomd'
 abbr -a actualizar-todo    'topgrade'
 
 # Función para listar los comandos personalizados
