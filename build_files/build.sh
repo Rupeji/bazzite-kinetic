@@ -3,7 +3,7 @@
 set -ouex pipefail
 
 ### 1. Añadir el repositorio COPR de KineticWE y complementos
-dnf5 copr enable theblackdon/kineticwe -y
+dnf5 copr enable linuxgamerlife/lgl-experimental -y
 dnf5 -y remove plasma-workspace plasma-* kde-*
 
 
