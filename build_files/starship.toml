@@ -1,5 +1,5 @@
 format = """
-[  Inhumano@Bazzite](bg:#d3daf2 fg:#090c0c bold)\
+[  Inhumano@Arch](bg:#d3daf2 fg:#090c0c bold)\
 [](bg:#497de3 fg:#d3daf2)\
 $directory\
 [](fg:#497de3 bg:#394260)\
