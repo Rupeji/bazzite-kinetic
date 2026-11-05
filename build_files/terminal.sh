@@ -18,9 +18,8 @@ curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin"
 # =====================================================================
 echo "Buscando e instalando la última release de gSlapper para Fedora..."
 
-REPO="Nomadcxx/gSlapper"
-BASE_API="https://github.com"
-RUTA_API="/repos/$REPO/releases/latest"
+BASE_API="https://api.github.com"
+RUTA_API="/repos/Nomadcxx/gSlapper/releases/latest"
 API_URL=$(echo "${BASE_API}${RUTA_API}" | tr -d ' ')
 
 if [ -n "${GITHUB_TOKEN:-}" ]; then
@@ -35,6 +34,7 @@ URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' |
 
 if [ -z "$URL_RPM" ]; then
     echo "Error: No se pudo encontrar un paquete .rpm en la última versión de gSlapper."
+    echo "Contenido devuelto por la API: $JSON_DATA"
     exit 1
 fi
 
