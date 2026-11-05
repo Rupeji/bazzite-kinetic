@@ -1,9 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -ouex pipefail
 
-### 1. Añadir el repositorio COPR de KineticWE y complementos
-dnf5 copr enable theblackdon/kwee -y
+### 1. Añadir el repositorio COPR de KineticWE oficial de Ublue y complementos
+dnf5 copr enable ublue-os/akmods -y
+dnf5 copr enable theblackdon/kwee -y  # Mantenlo solo si tienes dependencias extra aquí
+
+# Purgar caché de metadatos para forzar la lectura de las versiones corregidas de kscreen
+dnf5 clean all
+
+# Forzar la desinstalación previa para evitar bloqueos de dependencias con plasma anterior
 dnf5 -y remove plasma-workspace plasma-* kde-*
 
 
