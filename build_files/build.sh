@@ -2,7 +2,9 @@
 
 set -ouex pipefail
 
-### 1. Añadir el repositorio COPR de KineticWE y complementos
+# =====================================================================
+# 1. Añadir el repositorio COPR de KineticWE y complementos
+# =====================================================================
 dnf5 copr enable theblackdon/kwee -y
 
 # 👇 LA CLAVE: Forzar a DNF5 a descargar la lista de paquetes nueva del COPR
@@ -36,6 +38,7 @@ rm -f /etc/security/limits.d/30-brew-limits.conf /usr/etc/security/limits.d/30-b
 
 # Continuar con la purga de KDE nativo
 dnf5 -y remove plasma-workspace plasma-* kde-*
+
 
 # =====================================================================
 # 2. Scripts PRE-borradon y purga masiva desde removals.yaml
@@ -89,7 +92,9 @@ fi
 # 3. Ejecutar Instalación Masiva desde lista externa
 # =====================================================================
 PAQUETES_INSTALAR=$(grep -v '^#' "/ctx/paquetes_a_instalar.txt" | grep -v '^$' | tr '\n' ' ')
-[ -n "${PAQUETES_INSTALAR// /}" ] && dnf5 -y install $PAQUETES_INSTALAR
+if [ -n "${PAQUETES_INSTALAR// /}" ]; then
+    dnf5 -y install --allow-downgrade --allowerasing $PAQUETES_INSTALAR
+fi
 
 
 # =====================================================================
@@ -124,6 +129,7 @@ EOF
 
 ln -sf /usr/lib/systemd/system/kineticos-flatpak-installations.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-installations.service
 
+
 # =====================================================================
 # 6. Configurar el Shell y activar servicios de soporte (Compatible con Builds)
 # =====================================================================
@@ -132,34 +138,15 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
-# =====================================================================
-# 6.5 Inyección Nativa de Activos en el esqueleto de usuario (skel)
-# =====================================================================
-echo "Clonando repositorio de recursos superficialmente (IconsWalls)..."
-rm -rf /tmp/git_iconswalls_backup
+# 🚀 NUEVO: Registrar la asociación nativa de Nemo con Kitty por Dconf de texto plano
+echo "Registrando asociación de Nemo con Kitty en dconf global..."
+mkdir -p /etc/dconf/db/local.d
+cat << 'EOF' > /etc/dconf/db/local.d/00-nemo-kitty
+[org/cinnamon/desktop/default-applications/terminal]
+exec='kitty'
+EOF
+dconf update || true
 
-# 🚀 TRUCO ANTICORRUPCIÓN SEGURO: Mapeo de tu repositorio de activos sin cortes
-URL_ASSETS_ESPACIOS="https://github .com /Rupeji /IconsWalls"
-URL_ASSETS_LIMPIA=$(echo "$URL_ASSETS_ESPACIOS" | tr -d ' ')
-
-git clone --depth 1 "$URL_ASSETS_LIMPIA" /tmp/git_iconswalls_backup
-
-echo "Preparando el esqueleto de usuario para la clonación automática..."
-# Creamos las carpetas tanto en español como en inglés en el esqueleto del sistema
-mkdir -p /etc/skel/Imágenes
-mkdir -p /etc/skel/Pictures
-mkdir -p /etc/skel/.local/share/icons
-
-echo "Volcando activos del sistema hacia el esqueleto de usuario..."
-# Copiamos los Wallpapers a ambas variantes de carpetas de fotos de usuario
-cp -r /tmp/git_iconswalls_backup/Wallpapers/* /etc/skel/Imágenes/ 2>/dev/null || true
-cp -r /tmp/git_iconswalls_backup/Wallpapers/* /etc/skel/Pictures/ 2>/dev/null || true
-
-# Copiamos los iconos a la ruta local estándar oculta para que el sistema los detecte
-cp -r /tmp/git_iconswalls_backup/Iconos/* /etc/skel/.local/share/icons/ 2>/dev/null || true
-
-# Limpieza estricta de la caché temporal de compilación
-rm -rf /tmp/git_iconswalls_backup
 
 # =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
