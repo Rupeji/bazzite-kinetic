@@ -1,0 +1,124 @@
+[bar.default]
+background_opacity = 0.84999998100101948
+capsule = true
+center = [ "media", "monitor", "power_profile" ]
+concave_edge_corners = false
+end = [
+    "tray",
+    "notifications",
+    "clipboard",
+    "network",
+    "bluetooth",
+    "volume",
+    "brightness",
+    "control-center",
+    "clock",
+    "session"
+]
+font_family = "Adwaita Sans"
+margin_ends = 0
+start = [ "workspaces", "wallpaper" ]
+
+[calendar]
+enabled = true
+
+[dock]
+enabled = true
+launcher_custom_image = "/home/inhumano/Pictures/Iconos/bazzitescribbled.png"
+launcher_position = "start"
+margin_edge = 5
+pinned = [ "nemo", "kitty", "org.mozilla.firefox", "discord", "steam", "dev.kineticwe.Settings" ]
+reserve_space = false
+show_dots = true
+smart_auto_hide = true
+
+[location]
+address = "Mallorca"
+
+[lockscreen_widgets]
+enabled = false
+schema_version = 2
+widget_order = [ "lockscreen-login-box@Virtual-1" ]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@Virtual-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 950.0
+    cy = 757.04998779296875
+    output = "Virtual-1"
+    placement_height = 980.0
+    placement_width = 1900.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@Virtual-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_password_reveal = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+[plugins]
+enabled = [ "nomadcxx/gamer-mode", "nomadcxx/gslapper" ]
+
+[shell]
+date_format = "%A, %d de %B"
+polkit_agent = true
+
+[theme]
+source = "wallpaper"
+wallpaper_scheme = "m3-tonal-spot"
+
+    [theme.templates]
+    builtin_ids = [
+        "alacritty",
+        "btop",
+        "cava",
+        "emacs",
+        "foot",
+        "gtk3",
+        "gtk4",
+        "ghostty",
+        "helix",
+        "hyprland",
+        "kcolorscheme",
+        "kineticwe",
+        "kitty",
+        "labwc",
+        "mango",
+        "niri",
+        "qt",
+        "scroll",
+        "starship",
+        "sway",
+        "umbriel",
+        "wezterm"
+    ]
+    community_ids = [ "discord", "fastfetch" ]
+
+[wallpaper]
+directory = "/home/inhumano/Pictures/Wallpapers"
+
+    [wallpaper.default]
+    path = "/usr/share/noctalia-kwe/assets/noctalia-wallpaper.png"
+
+    [wallpaper.last]
+    path = "/usr/share/noctalia-kwe/assets/noctalia-wallpaper.png"
+
+[widget.monitor]
+type = "nomadcxx/gamer-mode:monitor"
