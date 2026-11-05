@@ -25,9 +25,9 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build.sh && \
     rm -f /etc/yum.repos.d/terra-mesa.repo
 
-# 🚀 TRUCO ANTICORRUPCIÓN: Declarar la URL con espacios y limpiarla antes de descargar
+# 🚀 TRUCO ANTICORRUPCIÓN ACTUALIZADO PARA BAZZITE 45:
 RUN mkdir -p /tmp/repos && \
-    URL_CON_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /releases /40 /Everything /x86_64 /os /Packages /f /fedora-repos-40-1 .noarch .rpm" && \
+    URL_CON_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /releases /45 /Everything /x86_64 /os /Packages /f /fedora-repos-45-1 .noarch .rpm" && \
     URL_LIMPIA=$(echo "$URL_CON_ESPACIOS" | tr -d ' ') && \
     curl -L -o /tmp/repos/fedora-repos.rpm "$URL_LIMPIA" && \
     cd /tmp/repos && rpm2cpio fedora-repos.rpm | cpio -idmv ./etc/yum.repos.d/* && \
