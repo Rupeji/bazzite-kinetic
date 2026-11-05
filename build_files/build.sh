@@ -9,9 +9,33 @@ dnf5 copr enable theblackdon/kwee -y
 dnf5 clean all
 dnf5 makecache
 
+# --- PURGA ADICIONAL DE IDIOMAS GLOBALES ---
+# Instalamos los langpacks específicos de español e inglés ANTES de quitar el paquete global 
+# (glibc exige que quede al menos un mapa de idioma activo)
+dnf5 install -y --allowerasing glibc-langpack-es glibc-langpack-en
+
+# --- PURGA DE HOMEBREW (BREW) COMPLETA ---
+echo "Purgando servicios y directorios de Homebrew..."
+systemctl disable brew-setup.service brew-update.timer brew-upgrade.timer || true
+rm -rf /var/home/linuxbrew
+rm -rf /var/home/*/.cache/Homebrew
+rm -f /usr/share/homebrew.tar.zst
+rm -f /usr/lib/systemd/system/brew-setup.service \
+      /usr/lib/systemd/system/brew-update.service \
+      /usr/lib/systemd/system/brew-upgrade.service \
+      /usr/lib/systemd/system/brew-update.timer \
+      /usr/lib/systemd/system/brew-upgrade.timer
+rm -f /etc/profile.d/brew.sh /etc/profile.d/brew-bash-completion.sh
+rm -f /usr/share/applications/bbrew.desktop /usr/bin/bbrew-helper /usr/share/ublue-os/bbrew.png
+rm -rf /usr/share/ublue-os/homebrew
+rm -f /usr/lib/systemd/system-preset/01-homebrew.preset
+rm -f /usr/share/fish/vendor_conf.d/ublue-brew.fish
+rm -f /usr/share/fish/completions/brew.fish
+rm -f /usr/share/ublue-os/announcements/sunshine-brew.msg.json
+rm -f /etc/security/limits.d/30-brew-limits.conf /usr/etc/security/limits.d/30-brew-limits.conf
+
 # Continuar con la purga de KDE nativo
 dnf5 -y remove plasma-workspace plasma-* kde-*
-
 
 # =====================================================================
 # 2. Scripts PRE-borradon y purga masiva desde removals.yaml
