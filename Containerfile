@@ -17,12 +17,12 @@ FROM ghcr.io/ublue-os/bazzite-nvidia-open:stable
 ARG GITHUB_TOKEN
 ENV GITHUB_TOKEN=$GITHUB_TOKEN
 
-# 🛠️ PASO 1: EJECUTAR TU SCRIPT DE PERSONALIZACIÓN COMPLETO (BUILD.SH)
+# 🚀 BYPASS DE PERMISOS PARA LA WEB: Añadimos 'bash' delante del script
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    /ctx/build.sh && \
+    bash /ctx/build.sh && \
     rm -f /etc/yum.repos.d/terra-mesa.repo
 
 # 🚀 PASO 2: INYECCIÓN DEFINITIVA DE REPOSITORIOS (MÉTODO ANTICORRUPCIÓN SEGURO)
