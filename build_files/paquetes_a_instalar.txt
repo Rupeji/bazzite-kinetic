@@ -1,19 +1,17 @@
-# === ENTORNO GRÁFICO KINETICWE + SPECTACLE + FIREFOX + KITTY ===
+# === APLICACIONES A INSTALAR ===
+
+# ESCRITORIO Y GREETER
 kineticwe
 kineticwe-greeter
-#Estos Son de KDE
-#spectacle
-#dolphin
-#ark
-#gwenview
-#kate
+
+# APLICACIONES
 firefox
 kitty
 fish
 loupe
 gnome-text-editor
 flameshot
-#mate-polkit
 mediawriter
 nemo
 nemo-fileroller
+protonplus
