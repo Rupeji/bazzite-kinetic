@@ -122,3 +122,14 @@ remove:
   # ---------------------------------------------------------------
   - konsole
   - glibc-all-langpacks
+  # ---------------------------------------------------------------
+  # Flatpaks heredados de Bazzite eliminados en origen
+  # ---------------------------------------------------------------
+  - io.github.DenysMb.Kontainer
+  - com.github.Matoking.protontricks
+  - org.kde.kcalc
+  - org.kde.okular
+  - org.mozilla.firefox
+  - org.kde.haruna
+  - org.kde.gwenview
+  - org.gnome.Firmware
