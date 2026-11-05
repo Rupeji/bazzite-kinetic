@@ -47,6 +47,7 @@ rm -f "$ARCHIVO_RPM"
 # =====================================================================
 # 3. Mapeo Estético Global de Dotfiles (Estructura Organizada)
 # =====================================================================
+
 echo "Comprobando la presencia de la carpeta Dotfiles por carpetas..."
 
 DIR_DOTFILES_ORIGEN="/ctx/dotfiles"
