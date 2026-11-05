@@ -1,0 +1,135 @@
+description: Remove Bazzite gaming apps, KDE desktop, and unwanted packages
+remove:
+  # Bazzite gaming apps (not needed for KineticWE)
+  - lutris
+  - waydroid
+  - waydroid-selinux
+  # On the NVIDIA base image waydroid-nvidia ships its own copies of the
+  # waydroid files/launcher, so removing waydroid alone leaves them behind.
+  - waydroid-nvidia
+  - waydroid-nvidia-selinux
+  - input-remapper
+  - cardwire
+  # Terra-stuff
+  - terra-mangohud
+  # Bazzite-specific tools
+  #- uupd
+  #- topgrade
+  - bazzite-portal
+  - bazzite-updater
+  # Microsoft Edit (TUI text editor)
+  - msedit
+  # Fcitx 5 input method stack
+  - fcitx5
+  - fcitx5-chewing
+  - fcitx5-chinese-addons
+  - fcitx5-chinese-addons-data
+  - fcitx5-configtool
+  - fcitx5-data
+  - fcitx5-gtk
+  - fcitx5-gtk3
+  - fcitx5-gtk4
+  - fcitx5-hangul
+  - fcitx5-libs
+  - fcitx5-libthai
+  - fcitx5-lua
+  - fcitx5-m17n
+  - fcitx5-mozc
+  - fcitx5-qt
+  - fcitx5-qt-libfcitx5qt6widgets
+  - fcitx5-qt-libfcitx5qtdbus
+  - fcitx5-qt-qt6gui
+  - fcitx5-qt5
+  - fcitx5-qt6
+  - fcitx5-sayura
+  - fcitx5-table-extra
+  - fcitx5-unikey
+  - kcm-fcitx5
+  # Bazaar storefront + KRunner plugin
+  - bazaar
+  - krunner-bazaar
+  # KDE Connect
+  - kde-connect
+  - kdeconnectd
+  - kde-connect-libs
+  # ROM Properties
+  - rom-propertiesi
+  - rom-properties-common
+  - rom-properties-kf6
+  - rom-properties-utils
+  # Mariadb (not needed)
+  - mariadb
+  - mariadb-server
+  - mariadb-common
+  - mariadb-errmsg
+  - mariadb-connector-c
+  - mariadb-connector-c-config
+  - mariadb-backup
+  - mariadb-cracklib-password-check
+  - mariadb-gssapi-server
+  # KDE Plasma Desktop (replaced by KineticWE)
+  - plasma-desktop
+  - plasma-workspace
+  - plasma-shell
+  - plasma-kwin_x11
+  - kwin
+  - kwin-x11
+  - kwin-wayland
+  - plasma-systemmonitor
+  - plasma-nano
+  - plasma-bigscreen
+  - plasma-browser-integration
+  - plasma-discover
+  - plasma-discover-flatpak
+  - plasma-pass
+  - plasma-pa
+  - plasma-desktoptheme
+  # `sddm` is deliberately NOT listed for removal: dnf drags it out as a
+  # dependent anyway (via `sddm-kcm`, and orphan cleanup), so the desktop
+  # variants still lose it, but the Steam Deck variant can reinstall it cleanly.
+  # Listing it here would make dcli-bootc's package verification fail on the
+  # deck build, which legitimately needs SDDM present.
+  - sddm-kcm
+  # KDE Apps (not needed)
+  - ark
+  - gwenview
+  - elisa
+  - okular
+  - kcalc
+  - kontainer
+  - kalarm
+  - kolourpaint
+  - krecorder
+  - kmail
+  - neochat
+  # Optional KDE apps: removed from the image by default, but NOT dnf-excluded.
+  # Users can add any of them back at runtime with `sudo kinpkg install <pkg>`;
+  # the overlay records them and they survive image updates. Keep these out of
+  # `kineticwe.yaml`/other enabled modules, or the build will reinstall them.
+  # (konsole is deliberately not listed here: kineticwe keeps it installed.)
+  - krfb
+  - krdc
+  - kfind
+  - kwrite
+  # KDE Settings Modules
+  - kcmshell
+  - plasma-systemsettings
+  # Breeze theme (KineticWE has its own)
+  - plasma-breeze
+  - breeze-gtk
+  # ---------------------------------------------------------------
+  # Purgas optimizadas personalizadas
+  # ---------------------------------------------------------------
+  - konsole
+  - glibc-all-langpacks
+  # ---------------------------------------------------------------
+  # Flatpaks heredados de Bazzite eliminados en origen
+  # ---------------------------------------------------------------
+  - io.github.DenysMb.Kontainer
+  - com.github.Matoking.protontricks
+  - org.kde.kcalc
+  - org.kde.okular
+  - org.mozilla.firefox
+  - org.kde.haruna
+  - org.kde.gwenview
+  - org.gnome.Firmware

@@ -1,0 +1,24 @@
+# === APLICACIONES A INSTALAR ===
+
+# ESCRITORIO Y GREETER
+kineticwe
+kineticwe-greeter
+
+# APLICACIONES
+firefox
+kitty
+loupe
+gnome-text-editor
+flameshot
+mediawriter
+nemo
+nemo-fileroller
+# ENTORNOS DE VIRTUALIZACIÓN AVANZADA (KVM/QEMU)
+virt-manager
+qemu-kvm
+qemu-system-x86
+qemu-img
+swtpm
+edk2-ovmf
+virt-viewer
+passt
