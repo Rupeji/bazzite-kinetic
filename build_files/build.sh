@@ -100,31 +100,6 @@ bash /ctx/terminal.sh
 
 
 # =====================================================================
-# 5. Despliegue del Script Externo de Flatpaks y Servicio Systemd
-# =====================================================================
-echo "Desplegando servicio e instalando script helper de Flatpaks..."
-cp /ctx/clean-flatpaks.sh /usr/libexec/kineticos-remove-flatpaks
-chmod +x /usr/libexec/kineticos-remove-flatpaks
-
-mkdir -p /usr/lib/systemd/system
-cat << 'EOF' > /usr/lib/systemd/system/kineticos-flatpak-removals.service
-[Unit]
-Description=Remove unwanted Bazzite system Flatpaks (once per app)
-ConditionPathExists=/usr/bin/flatpak
-
-[Service]
-Type=oneshot
-ExecStart=/usr/libexec/kineticos-remove-flatpaks
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-mkdir -p /etc/systemd/system/multi-user.target.wants
-ln -sf /usr/lib/systemd/system/kineticos-flatpak-removals.service /etc/systemd/system/multi-user.target.wants/kineticos-flatpak-removals.service
-
-# =====================================================================
 # 5.1 Despliegue del Script Externo de Instalación de Flatpaks
 # =====================================================================
 echo "Desplegando servicio e instalando script helper de instalación de Flatpaks..."
