@@ -47,7 +47,7 @@ widget_order = [ "lockscreen-login-box@Virtual-1" ]
 
     [lockscreen_widgets.widget."lockscreen-login-box@Virtual-1"]
     box_height = 196.0
-    box_width = 810.0
+    box_width = 720.0
     cx = 950.0
     cy = 757.04998779296875
     output = "Virtual-1"
@@ -115,10 +115,13 @@ wallpaper_scheme = "m3-tonal-spot"
 directory = "/home/inhumano/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/usr/share/noctalia-kwe/assets/noctalia-wallpaper.png"
+    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
 
     [wallpaper.last]
-    path = "/usr/share/noctalia-kwe/assets/noctalia-wallpaper.png"
+    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
+
+    [wallpaper.monitors.Virtual-1]
+    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
 
 [widget.monitor]
 type = "nomadcxx/gamer-mode:monitor"
