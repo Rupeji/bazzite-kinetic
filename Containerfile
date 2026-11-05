@@ -25,10 +25,11 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build.sh && \
     rm -f /etc/yum.repos.d/terra-mesa.repo
 
-# 🚀 INYECCIÓN NATIVA COMPATIBLE CON BOOTC EN GITHUB ACTIONS:
-# Descarga y extrae los archivos .repo oficiales en espacio de usuario sin invocar rpm-ostree
+# 🚀 TRUCO ANTICORRUPCIÓN: Declarar la URL con espacios y limpiarla antes de descargar
 RUN mkdir -p /tmp/repos && \
-    curl -L -o /tmp/repos/fedora-repos.rpm https://fedoraproject.org && \
+    URL_CON_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /releases /40 /Everything /x86_64 /os /Packages /f /fedora-repos-40-1 .noarch .rpm" && \
+    URL_LIMPIA=$(echo "$URL_CON_ESPACIOS" | tr -d ' ') && \
+    curl -L -o /tmp/repos/fedora-repos.rpm "$URL_LIMPIA" && \
     cd /tmp/repos && rpm2cpio fedora-repos.rpm | cpio -idmv ./etc/yum.repos.d/* && \
     cp -r ./etc/yum.repos.d/* /etc/yum.repos.d/ && \
     rm -rf /tmp/repos
