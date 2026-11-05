@@ -1,0 +1,14 @@
+[org.kde.spectacle.desktop][Global Shortcuts]
+_launch=
+FullScreenScreenShot=
+CurrentMonitorScreenShot=
+ActiveWindowScreenShot=
+RectangularRegionScreenShot=
+WindowUnderCursorScreenShot=
+OpenWithoutScreenshot=
+RecordRegion=
+RecordScreen=
+RecordWindow=
+
+[Migration]
+SpectacleRecordingUnbound=kineticwe-2.1
