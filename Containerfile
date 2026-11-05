@@ -25,10 +25,13 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build.sh && \
     rm -f /etc/yum.repos.d/terra-mesa.repo
 
-# 🚀 LA SOLUCIÓN INMUTABLE NATIVA EN GITHUB:
-# Reinstala los repositorios oficiales de Fedora usando la herramienta nativa de capas de bootc
-RUN rpm-ostree install -y fedora-repos-archive fedora-repos && \
-    rpm-ostree cleanup -m
+# 🚀 INYECCIÓN NATIVA COMPATIBLE CON BOOTC EN GITHUB ACTIONS:
+# Descarga y extrae los archivos .repo oficiales en espacio de usuario sin invocar rpm-ostree
+RUN mkdir -p /tmp/repos && \
+    curl -L -o /tmp/repos/fedora-repos.rpm https://fedoraproject.org && \
+    cd /tmp/repos && rpm2cpio fedora-repos.rpm | cpio -idmv ./etc/yum.repos.d/* && \
+    cp -r ./etc/yum.repos.d/* /etc/yum.repos.d/ && \
+    rm -rf /tmp/repos
 
 ### LINTING
 ## Verify final image and contents are correct.
