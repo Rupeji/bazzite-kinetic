@@ -17,13 +17,13 @@ FROM ghcr.io/ublue-os/bazzite-nvidia-open:stable
 ARG GITHUB_TOKEN
 ENV GITHUB_TOKEN=$GITHUB_TOKEN
 
+# ⚠️ SE HA ELIMINADO EL COMANDO 'ostree container commit' AL FINAL DE ESTA DIRECTIVA
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build.sh && \
-    rm -f /etc/yum.repos.d/terra-mesa.repo && \
-    ostree container commit
+    rm -f /etc/yum.repos.d/terra-mesa.repo
 
 ### LINTING
 ## Verify final image and contents are correct.
