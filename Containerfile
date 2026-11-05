@@ -25,6 +25,9 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build.sh && \
     rm -f /etc/yum.repos.d/terra-mesa.repo
 
+# 👇 SOLUCIÓN DE RAÍZ: Reinstala los repositorios oficiales dinámicos de Fedora en la imagen
+RUN rpm -q fedora-repos || dnf install -y fedora-repos
+
 ### LINTING
 ## Verify final image and contents are correct.
 RUN bootc container lint
