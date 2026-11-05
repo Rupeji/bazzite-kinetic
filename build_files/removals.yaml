@@ -117,3 +117,8 @@ remove:
   # Breeze theme (KineticWE has its own)
   - plasma-breeze
   - breeze-gtk
+  # ---------------------------------------------------------------
+  # Purgas optimizadas personalizadas
+  # ---------------------------------------------------------------
+  - konsole
+  - glibc-all-langpacks
