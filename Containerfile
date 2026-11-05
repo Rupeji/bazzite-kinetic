@@ -26,13 +26,16 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     rm -f /etc/yum.repos.d/terra-mesa.repo
 
 # 🚀 TRUCO ANTICORRUPCIÓN ACTUALIZADO PARA BAZZITE 45:
-RUN mkdir -p /tmp/repos && \
-    URL_CON_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /releases /45 /Everything /x86_64 /os /Packages /f /fedora-repos-45-1 .noarch .rpm" && \
-    URL_LIMPIA=$(echo "$URL_CON_ESPACIOS" | tr -d ' ') && \
-    curl -L -o /tmp/repos/fedora-repos.rpm "$URL_LIMPIA" && \
-    cd /tmp/repos && rpm2cpio fedora-repos.rpm | cpio -idmv ./etc/yum.repos.d/* && \
-    cp -r ./etc/yum.repos.d/* /etc/yum.repos.d/ && \
-    rm -rf /tmp/repos
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/tmp \
+    /ctx/build.sh && \
+    rm -f /etc/yum.repos.d/terra-mesa.repo
+
+# 🚀 CREACIÓN NATIVA DE REPOSITORIOS FEDORA 45 EN TEXTO PLANO (CERO COMPRESIÓN):
+RUN mkdir -p /etc/yum.repos.d && \
+    echo -e '[fedora]\nname=Fedora 45 - $basearch\nmetalink=https://fedoraproject.org\nenabled=1\ngpgcheck=0\n\n[updates]\nname=Fedora 45 - Updates - $basearch\nmetalink=https://fedoraproject.org\nenabled=1\ngpgcheck=0' > /etc/yum.repos.d/fedora-dynamic-inject.repo
 
 ### LINTING
 ## Verify final image and contents are correct.
