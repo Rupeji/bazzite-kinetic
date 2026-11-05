@@ -133,6 +133,35 @@ mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
 # =====================================================================
+# 6.5 Inyección Nativa de Activos en el esqueleto de usuario (skel)
+# =====================================================================
+echo "Clonando repositorio de recursos superficialmente (IconsWalls)..."
+rm -rf /tmp/git_iconswalls_backup
+
+# 🚀 TRUCO ANTICORRUPCIÓN SEGURO: Mapeo de tu repositorio de activos sin cortes
+URL_ASSETS_ESPACIOS="https://github .com /Rupeji /IconsWalls"
+URL_ASSETS_LIMPIA=$(echo "$URL_ASSETS_ESPACIOS" | tr -d ' ')
+
+git clone --depth 1 "$URL_ASSETS_LIMPIA" /tmp/git_iconswalls_backup
+
+echo "Preparando el esqueleto de usuario para la clonación automática..."
+# Creamos las carpetas tanto en español como en inglés en el esqueleto del sistema
+mkdir -p /etc/skel/Imágenes
+mkdir -p /etc/skel/Pictures
+mkdir -p /etc/skel/.local/share/icons
+
+echo "Volcando activos del sistema hacia el esqueleto de usuario..."
+# Copiamos los Wallpapers a ambas variantes de carpetas de fotos de usuario
+cp -r /tmp/git_iconswalls_backup/Wallpapers/* /etc/skel/Imágenes/ 2>/dev/null || true
+cp -r /tmp/git_iconswalls_backup/Wallpapers/* /etc/skel/Pictures/ 2>/dev/null || true
+
+# Copiamos los iconos a la ruta local estándar oculta para que el sistema los detecte
+cp -r /tmp/git_iconswalls_backup/Iconos/* /etc/skel/.local/share/icons/ 2>/dev/null || true
+
+# Limpieza estricta de la caché temporal de compilación
+rm -rf /tmp/git_iconswalls_backup
+
+# =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
 # =====================================================================
 echo "Desplegando parche de tmpfiles y SELinux para greetd..."
