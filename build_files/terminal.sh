@@ -57,53 +57,53 @@ if [ -d "$DIR_DOTFILES_ORIGEN" ]; then
     # 1. Asegurar la creación de todos los directorios en el esqueleto de usuario
     mkdir -p /etc/skel/.config/kitty
     mkdir -p /etc/skel/.config/fish
-    mkdir -p /etc/skel/.config/noctalia
     mkdir -p /etc/skel/.config/kineticwe
     mkdir -p /etc/skel/.config/niri
+    mkdir -p /etc/skel/.config/noctalia-kwe
 
-    # 2. Despliegue quirúrgico de la terminal y shell desde sus subcarpetas
+    # 2. Despliegue quirúrgico de las configuraciones desde sus subcarpetas organizadas
     if [ -f "$DIR_DOTFILES_ORIGEN/kitty/kitty.conf" ]; then
-        echo " -> Inyectando configuración organizada de Kitty..."
+        echo " -> Inyectando dotfiles de Kitty..."
         cp "$DIR_DOTFILES_ORIGEN/kitty/kitty.conf" /etc/skel/.config/kitty/kitty.conf
     fi
 
     if [ -f "$DIR_DOTFILES_ORIGEN/fish/config.fish" ]; then
-        echo " -> Inyectando configuración organizada de Fish..."
+        echo " -> Inyectando dotfiles de Fish..."
         cp "$DIR_DOTFILES_ORIGEN/fish/config.fish" /etc/skel/.config/fish/config.fish
     fi
 
     if [ -f "$DIR_DOTFILES_ORIGEN/starship/starship.toml" ]; then
-        echo " -> Inyectando configuración organizada de Starship..."
+        echo " -> Inyectando dotfiles de Starship..."
         cp "$DIR_DOTFILES_ORIGEN/starship/starship.toml" /etc/skel/.config/starship.toml
-    elif [ -f "$DIR_DOTFILES_ORIGEN/starship.toml" ]; then
-        # Salvaguarda por si dejas starship en la raíz de dotfiles
-        cp "$DIR_DOTFILES_ORIGEN/starship.toml" /etc/skel/.config/starship.toml
     fi
 
-    # 3. Despliegue de los entornos gráficos (Noctalia y KineticWE) cuando los añadas
-    if [ -f "$DIR_DOTFILES_ORIGEN/noctalia/config.toml" ]; then
-        echo " -> Inyectando configuración de Noctalia..."
-        cp "$DIR_DOTFILES_ORIGEN/noctalia/config.toml" /etc/skel/.config/noctalia/config.toml
+    if [ -d "$DIR_DOTFILES_ORIGEN/kineticwe" ]; then
+        echo " -> Copiando toda la estructura interna de KineticWE..."
+        cp -r "$DIR_DOTFILES_ORIGEN/kineticwe"/* /etc/skel/.config/kineticwe/ 2>/dev/null || true
     fi
 
-    if [ -f "$DIR_DOTFILES_ORIGEN/kineticwe/settings.json" ]; then
-        echo " -> Inyectando configuración de KineticWE..."
-        cp "$DIR_DOTFILES_ORIGEN/kineticwe/settings.json" /etc/skel/.config/kineticwe/settings.json
+    if [ -d "$DIR_DOTFILES_ORIGEN/niri" ]; then
+        echo " -> Copiando toda la estructura interna de Niri..."
+        cp -r "$DIR_DOTFILES_ORIGEN/niri"/* /etc/skel/.config/niri/ 2>/dev/null || true
     fi
 
-    # 4. Copia masiva de respaldo (Mantiene compatibilidad con cualquier otra subcarpeta libre)
+    if [ -d "$DIR_DOTFILES_ORIGEN/noctalia-kwe" ]; then
+        echo " -> Copiando toda la estructura interna de Noctalia-KWE..."
+        cp -r "$DIR_DOTFILES_ORIGEN/noctalia-kwe"/* /etc/skel/.config/noctalia-kwe/ 2>/dev/null || true
+    fi
+
+    # 3. Salvaguarda masiva (Copia cualquier otro archivo o subcarpeta suelta que metas en un futuro)
     cp -r "$DIR_DOTFILES_ORIGEN"/* /etc/skel/.config/ 2>/dev/null || true
     
-    # Asegurar que no se dupliquen las carpetas raíz si se usó la copia masiva
-    rm -rf /etc/skel/.config/kitty/kitty /etc/skel/.config/fish/fish /etc/skel/.config/starship 2>/dev/null || true
+    # Limpieza de duplicados accidentales por la copia masiva del esqueleto
+    rm -rf /etc/skel/.config/kitty/kitty /etc/skel/.config/fish/fish /etc/skel/.config/starship \
+           /etc/skel/.config/kineticwe/kineticwe /etc/skel/.config/niri/niri /etc/skel/.config/noctalia-kwe/noctalia-kwe 2>/dev/null || true
 
-    # Forzar permisos estándar correctos
+    # Forzar los permisos correctos para el entorno personal del usuario
     chmod -R 755 /etc/skel/.config
-    echo "¡Dotfiles estructurados desplegados con éxito!"
+    echo "¡Dotfiles del esqueleto de usuario desplegados con éxito!"
 else
     echo "Aviso: Carpeta 'dotfiles' no encontrada. Aplicando plantillas de emergencia básicas..."
-    
-    # PLANTILLAS DE EMERGENCIA (Bypass por si eliminas la carpeta temporalmente para testear)
     mkdir -p /etc/skel/.config/kitty /etc/skel/.config/fish
     [ -f /ctx/kitty.conf ] && cp /ctx/kitty.conf /etc/skel/.config/kitty/kitty.conf
     [ -f /ctx/starship.toml ] && cp /ctx/starship.toml /etc/skel/.config/starship.toml
