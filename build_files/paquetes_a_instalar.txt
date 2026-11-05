@@ -7,14 +7,12 @@ kineticwe-greeter
 # APLICACIONES
 firefox
 kitty
-fish
 loupe
 gnome-text-editor
 flameshot
 mediawriter
 nemo
 nemo-fileroller
-protonplus
 # ENTORNOS DE VIRTUALIZACIÓN AVANZADA (KVM/QEMU)
 virt-manager
 qemu-kvm
