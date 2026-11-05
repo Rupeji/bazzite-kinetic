@@ -9,15 +9,14 @@ if [ -f "$FLAG_FILE" ]; then
     exit 0
 fi
 
-# Asegurar que el repositorio de Flathub esté habilitado
-flatpak remote-add --if-not-exists flathub https://flathub.org
+# Asegurar que el repositorio de Flathub esté habilitado a nivel de sistema
+flatpak remote-add --system --if-not-exists flathub https://flathub.org
 
-# Instalar los paquetes Flatpaks deseados de forma silenciosa
+# Instalar los paquetes Flatpaks deseados de forma silenciosa e ininterrumpida
 echo "Instalando Flatpaks personalizados del sistema por primera vez..."
-flatpak install flathub com.discordapp.Discord -y
-flatpak install flathub com.bambulab.BambuStudio -y
-flatpak install flathub com.github.vikoadi.ProtonPlus -y
-flatpak install flathub net.davidotek.pupgui2 -y
+flatpak install flathub com.discordapp.Discord -y --system --noninteractive
+flatpak install flathub com.bambulab.BambuStudio -y --system --noninteractive
+flatpak install flathub net.davidotek.pupgui2 -y --system --noninteractive
 
 # Si la instalación fue exitosa, crear el archivo flag
 if [ $? -eq 0 ]; then
