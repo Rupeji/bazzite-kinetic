@@ -17,13 +17,30 @@ FROM ghcr.io/ublue-os/bazzite-nvidia-open:stable
 ARG GITHUB_TOKEN
 ENV GITHUB_TOKEN=$GITHUB_TOKEN
 
-# 🚀 INYECCIÓN DEFINITIVA DE REPOSITORIOS (MÉTODO ANTICORRUPCIÓN SEGURO)
+# 🛠️ PASO 1: EJECUTAR TU SCRIPT DE PERSONALIZACIÓN COMPLETO (BUILD.SH)
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/tmp \
+    /ctx/build.sh && \
+    rm -f /etc/yum.repos.d/terra-mesa.repo
+
+# 🚀 PASO 2: INYECCIÓN DEFINITIVA DE REPOSITORIOS (MÉTODO ANTICORRUPCIÓN SEGURO)
 RUN mkdir -p /etc/yum.repos.d && \
-    URL_BASE_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /releases /45 /Everything /\\$basearch /os/" && \
-    URL_UPD_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /updates /45 /Everything /\\$basearch/" && \
+    URL_BASE_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /releases /45 /Everything /" && \
+    URL_UPD_ESPACIOS="https://dl .fedoraproject .org /pub /fedora /linux /updates /45 /Everything /" && \
     URL_BASE_LIMPIA=$(echo "$URL_BASE_ESPACIOS" | tr -d ' ') && \
     URL_UPD_LIMPIA=$(echo "$URL_UPD_ESPACIOS" | tr -d ' ') && \
-    echo -e "[fedora]\nname=Fedora 45 - \$basearch\nbaseurl=$URL_BASE_LIMPIA\nenabled=1\ngpgcheck=0\n\n[updates]\nname=Fedora 45 - Updates - \$basearch\nbaseurl=$URL_UPD_LIMPIA\nenabled=1\ngpgcheck=0" > /etc/yum.repos.d/fedora-dynamic-inject.repo
+    echo '[fedora]' > /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo 'name=Fedora 45 - $basearch' >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo "baseurl=${URL_BASE_LIMPIA}\$basearch/os/" >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo 'enabled=1' >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo 'gpgcheck=0' >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo -e '\n[updates]' >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo 'name=Fedora 45 - Updates - $basearch' >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo "baseurl=${URL_UPD_LIMPIA}\$basearch/" >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo 'enabled=1' >> /etc/yum.repos.d/fedora-dynamic-inject.repo && \
+    echo 'gpgcheck=0' >> /etc/yum.repos.d/fedora-dynamic-inject.repo
 
 ### LINTING
 ## Verify final image and contents are correct.
