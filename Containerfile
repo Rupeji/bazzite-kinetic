@@ -25,14 +25,6 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build.sh && \
     rm -f /etc/yum.repos.d/terra-mesa.repo
 
-# 🚀 TRUCO ANTICORRUPCIÓN ACTUALIZADO PARA BAZZITE 45:
-RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
-    --mount=type=tmpfs,dst=/tmp \
-    /ctx/build.sh && \
-    rm -f /etc/yum.repos.d/terra-mesa.repo
-
 # 🚀 CREACIÓN NATIVA DE REPOSITORIOS FEDORA 45 EN TEXTO PLANO (CERO COMPRESIÓN):
 RUN mkdir -p /etc/yum.repos.d && \
     echo -e '[fedora]\nname=Fedora 45 - $basearch\nmetalink=https://fedoraproject.org\nenabled=1\ngpgcheck=0\n\n[updates]\nname=Fedora 45 - Updates - $basearch\nmetalink=https://fedoraproject.org\nenabled=1\ngpgcheck=0' > /etc/yum.repos.d/fedora-dynamic-inject.repo
