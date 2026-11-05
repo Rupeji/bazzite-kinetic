@@ -15,3 +15,12 @@ mediawriter
 nemo
 nemo-fileroller
 protonplus
+# ENTORNOS DE VIRTUALIZACIÓN AVANZADA (KVM/QEMU)
+virt-manager
+qemu-kvm
+qemu-system-x86
+qemu-img
+swtpm
+edk2-ovmf
+virt-viewer
+passt
