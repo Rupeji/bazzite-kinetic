@@ -123,14 +123,24 @@ if [ -d "$DIR_DOTFILES_ORIGEN" ]; then
     chmod -R 755 /etc/skel/.config
     echo "¡Dotfiles del esqueleto de usuario desplegados con éxito!"
 fi
-#else
-#    echo "Aviso: Carpeta 'dotfiles' no encontrada. Aplicando plantillas de emergencia básicas..."
-#    mkdir -p /etc/skel/.config/kitty /etc/skel/.config/fish
-#    [ -f /ctx/kitty.conf ] && cp /ctx/kitty.conf /etc/skel/.config/kitty/kitty.conf
-#    [ -f /ctx/starship.toml ] && cp /ctx/starship.toml /etc/skel/.config/starship.toml
-#    [ -f /ctx/config.fish ] && cp /ctx/config.fish /etc/skel/.config/fish/config.fish
-#    chmod -R 755 /etc/skel/.config
+
+# =====================================================================
+# Inyección del Esquema de Color personalizado en el esqueleto
+# =====================================================================
+echo "Preparando el directorio de esquemas de color en el esqueleto..."
+
+# 1. Asegurar la creación de la ruta completa dentro de /etc/skel
+mkdir -p /etc/skel/.local/share/color-schemes
+
+# 2. Copiar el archivo desde tu carpeta de contexto o dotfiles origen
+# (Cambia "/ctx/mi-tema.colors" por la ruta real donde tengas guardado tu archivo)
+if [ -f "/ctx/mi-tema.colors" ]; then
+    echo " -> Inyectando archivo de esquema de color..."
+    cp "/ctx/mi-tema.colors" /etc/skel/.local/share/color-schemes/
 fi
+
+# 3. Ajustar los permisos para que sea accesible por el usuario
+chmod -R 755 /etc/skel/.local
 
 # =====================================================================
 # 4. Instalar la tipografía oficial para los iconos de la consola
