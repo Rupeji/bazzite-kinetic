@@ -121,7 +121,7 @@ remove:
   # Purgas optimizadas personalizadas
   # ---------------------------------------------------------------
   - konsole
-  - glibc-all-langpacks
+  #- glibc-all-langpacks
   # ---------------------------------------------------------------
   # Flatpaks heredados de Bazzite eliminados en origen
   # ---------------------------------------------------------------
