@@ -11,14 +11,30 @@ dnf5 copr enable theblackdon/kwee -y
 dnf5 clean all
 dnf5 makecache
 
-
-
 # Continuar con la purga de KDE nativo
 dnf5 -y remove plasma-workspace plasma-* kde-*
 
+# =====================================================================
+# 2. Purga completa de Homebrew (Específico para Bazzite/Ublue)
+# =====================================================================
+echo "Purgando por completo el ecosistema de Homebrew..."
+
+#  Eliminar los servicios automáticos y temporizadores de actualización del sistema
+rm -f /usr/lib/systemd/system/brew-setup.service \
+      /usr/lib/systemd/system/brew-update.timer \
+      /usr/lib/systemd/system/brew-upgrade.timer \
+      /usr/lib/systemd/system-preset/00-brew.preset
+
+#  Desvincular del entorno global (Binarios y perfiles de los shells principales)
+rm -f /usr/bin/brew \
+      /etc/profile.d/brew.sh \
+      /etc/fish/conf.d/brew.fish
+
+#  Borrar el almacenamiento base en la imagen inmutable (si existiera)
+rm -rf /var/lib/homebrew
 
 # =====================================================================
-# 2. Scripts PRE-borradon y purga masiva desde removals.yaml
+# 2.1. Scripts PRE-borradon y purga masiva desde removals.yaml
 # =====================================================================
 echo "Ejecutando limpiezas de archivos PRE-borrado..."
 rm -f /usr/share/applications/waydroid-* /etc/sddm.conf
