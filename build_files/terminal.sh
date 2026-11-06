@@ -103,13 +103,13 @@ if [ -d "$DIR_DOTFILES_ORIGEN" ]; then
     # Forzar los permisos correctos para el entorno personal del usuario
     chmod -R 755 /etc/skel/.config
     echo "¡Dotfiles del esqueleto de usuario desplegados con éxito!"
-else
-    echo "Aviso: Carpeta 'dotfiles' no encontrada. Aplicando plantillas de emergencia básicas..."
-    mkdir -p /etc/skel/.config/kitty /etc/skel/.config/fish
-    [ -f /ctx/kitty.conf ] && cp /ctx/kitty.conf /etc/skel/.config/kitty/kitty.conf
-    [ -f /ctx/starship.toml ] && cp /ctx/starship.toml /etc/skel/.config/starship.toml
-    [ -f /ctx/config.fish ] && cp /ctx/config.fish /etc/skel/.config/fish/config.fish
-    chmod -R 755 /etc/skel/.config
+#else
+#    echo "Aviso: Carpeta 'dotfiles' no encontrada. Aplicando plantillas de emergencia básicas..."
+#    mkdir -p /etc/skel/.config/kitty /etc/skel/.config/fish
+#    [ -f /ctx/kitty.conf ] && cp /ctx/kitty.conf /etc/skel/.config/kitty/kitty.conf
+#    [ -f /ctx/starship.toml ] && cp /ctx/starship.toml /etc/skel/.config/starship.toml
+#    [ -f /ctx/config.fish ] && cp /ctx/config.fish /etc/skel/.config/fish/config.fish
+#    chmod -R 755 /etc/skel/.config
 fi
 
 # =====================================================================
