@@ -169,7 +169,7 @@ rm -f /tmp/Bibata-Modern-Classic.tar.xz /tmp/Bibata-Modern-Ice.tar.xz
 
 
 # =====================================================================
-# 6. Descarga e Inyección de Recursos Globales (Iconos y Wallpapers)
+# 6. Descarga e Inyección de Recursos Globales en Pictures (Iconos y Wallpapers)
 # =====================================================================
 echo "Conectando con GitHub para descargar tu repositorio IconsWalls..."
 
@@ -184,30 +184,29 @@ echo "Clonando repositorio superficialmente (IconsWalls)..."
 if git clone --depth 1 "$URL_ASSETS_LIMPIA" "$DIR_TEMPORAL"; then
     echo "Repositorio clonado correctamente."
 
-    # Crear directorios en el esqueleto base del usuario
-    mkdir -p /etc/skel/Imágenes
+    # Aseguramos la creación de la ruta Pictures dentro del esqueleto
     mkdir -p /etc/skel/Pictures
-    mkdir -p /etc/skel/.local/share/icons
     mkdir -p /etc/skel/.config/noctalia/activos
 
-    # Despliegue de los Wallpapers en ambas variantes de carpetas de fotos de usuario
+    # Despliegue de la carpeta completa de Wallpapers dentro de Pictures
     if [ -d "$DIR_TEMPORAL/Wallpapers" ]; then
-        echo "Copiando Wallpapers al esqueleto de usuario..."
-        cp -r "$DIR_TEMPORAL/Wallpapers"/* /etc/skel/Imágenes/ 2>/dev/null || true
-        cp -r "$DIR_TEMPORAL/Wallpapers"/* /etc/skel/Pictures/ 2>/dev/null || true
+        echo "Copiando carpeta Wallpapers a la ruta Pictures del esqueleto..."
+        cp -r "$DIR_TEMPORAL/Wallpapers" /etc/skel/Pictures/
     fi
 
-    # Despliegue de los iconos a la ruta local estándar oculta para que el sistema los detecte
+    # Despliegue de la carpeta completa de Iconos dentro de Pictures
     if [ -d "$DIR_TEMPORAL/Iconos" ]; then
-        echo "Copiando Iconos al esqueleto de usuario..."
-        cp -r "$DIR_TEMPORAL/Iconos"/* /etc/skel/.local/share/icons/ 2>/dev/null || true
+        echo "Copiando carpeta Iconos a la ruta Pictures del esqueleto..."
+        cp -r "$DIR_TEMPORAL/Iconos" /etc/skel/Pictures/
         
-        # Inyectar también el logotipo personalizado del dock en el esqueleto
+        # Inyectar también el logotipo personalizado del dock en su ruta de configuración
         echo "Inyectando logotipo personalizado del dock..."
         cp "$DIR_TEMPORAL/Iconos/Bazzite_Logo.png" /etc/skel/.config/noctalia/activos/ 2>/dev/null || true
     fi
     
-    echo "¡Assets globales copiados con éxito al esqueleto!"
+    # Ajustamos permisos finales para asegurar que el usuario tenga acceso total
+    chmod -R 755 /etc/skel/Pictures
+    echo "¡Carpetas de assets copiadas con éxito a Pictures en el esqueleto!"
 else
     echo "Error crítico: No se pudo clonar el repositorio de assets."
     exit 1
