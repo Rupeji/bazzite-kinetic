@@ -17,17 +17,30 @@ end = [
 ]
 font_family = "Adwaita Sans"
 margin_ends = 0
+radius = 0
 start = [ "workspaces", "wallpaper" ]
 
 [calendar]
 enabled = true
 
+[desktop_widgets]
+schema_version = 2
+widget_order = []
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [desktop_widgets.widget]
+
 [dock]
+concave_edge_corners = false
 enabled = true
-launcher_custom_image = "/home/inhumano/Pictures/Iconos/bazzitescribbled.png"
+launcher_custom_image = "/home/inhumano/Imágenes/Iconos/bazzitescribbled.png"
 launcher_position = "start"
 margin_edge = 5
-pinned = [ "nemo", "kitty", "org.mozilla.firefox", "discord", "steam", "dev.kineticwe.Settings" ]
+pinned = [ "nemo", "kitty", "firefox", "discord", "steam", "dev.kineticwe.Settings" ]
 reserve_space = false
 show_dots = true
 smart_auto_hide = true
@@ -35,28 +48,30 @@ smart_auto_hide = true
 [location]
 address = "Mallorca"
 
+[lockscreen]
+wallpaper = "/home/inhumano/Pictures/wp8005738-anime-hd-arts-wallpapers.jpg"
+
 [lockscreen_widgets]
-enabled = false
 schema_version = 2
-widget_order = [ "lockscreen-login-box@Virtual-1" ]
+widget_order = [ "lockscreen-login-box@DP-2", "lockscreen-login-box@DP-1" ]
 
     [lockscreen_widgets.grid]
     cell_size = 16
     major_interval = 4
     visible = true
 
-    [lockscreen_widgets.widget."lockscreen-login-box@Virtual-1"]
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
     box_height = 196.0
-    box_width = 720.0
-    cx = 950.0
-    cy = 757.04998779296875
-    output = "Virtual-1"
-    placement_height = 980.0
-    placement_width = 1900.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 898.0
+    output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "login_box"
 
-        [lockscreen_widgets.widget."lockscreen-login-box@Virtual-1".settings]
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
         background_color = "surface_variant"
         background_opacity = 0.88
         background_radius = 12.0
@@ -73,11 +88,55 @@ widget_order = [ "lockscreen-login-box@Virtual-1" ]
         show_unlock_hint = true
         show_weather = true
 
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-2"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 898.0
+    output = "DP-2"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-2".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_password_reveal = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+[plugin_settings."nomadcxx/gslapper"]
+video_directory = "/home/inhumano/Imágenes/Wallpapers"
+
 [plugins]
+auto_update = "all"
 enabled = [ "nomadcxx/gamer-mode", "nomadcxx/gslapper" ]
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/official-plugins"
+    name = "official"
+
+    [[plugins.source]]
+    kind = "git"
+    location = "https://github.com/noctalia-dev/community-plugins"
+    name = "community"
 
 [shell]
 date_format = "%A, %d de %B"
+lang = "es"
+panel_anchor_bar = "default"
 polkit_agent = true
 
 [theme]
@@ -109,19 +168,25 @@ wallpaper_scheme = "m3-tonal-spot"
         "umbriel",
         "wezterm"
     ]
-    community_ids = [ "discord", "fastfetch" ]
+    community_ids = [ "discord", "fastfetch", "thunar" ]
 
 [wallpaper]
-directory = "/home/inhumano/Pictures/Wallpapers"
+directory = "/home/inhumano/Imágenes/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
+    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
 
     [wallpaper.last]
-    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
+    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
 
-    [wallpaper.monitors.Virtual-1]
-    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
+    [wallpaper.monitors.DP-1]
+    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
+
+    [wallpaper.monitors.DP-2]
+    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
 
 [widget.monitor]
 type = "nomadcxx/gamer-mode:monitor"
+
+[widget.sysmon]
+enabled = false
