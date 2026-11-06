@@ -143,18 +143,18 @@ polkit_agent = true
 source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
 
-    [theme.templates]
-    builtin_ids = [
-        "gtk3",
-        "gtk4",
-        "kcolorscheme",
-        "kineticwe",
-        "kitty",
-        "niri",
-        "qt",
-        "starship"
-    ]
-    community_ids = [ "discord", "fastfetch" ]
+   # [theme.templates]
+   # builtin_ids = [
+   #     "gtk3",
+   #     "gtk4",
+   #     "kcolorscheme",
+   #     "kineticwe",
+   #     "kitty",
+   #     "niri",
+   #     "qt",
+   #     "starship"
+   # ]
+   # community_ids = [ "discord", "fastfetch" ]
 
 [wallpaper]
 directory = "/home/inhumano/Pictures/Wallpapers"
