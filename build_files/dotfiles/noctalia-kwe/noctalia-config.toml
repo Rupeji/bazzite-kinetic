@@ -37,7 +37,7 @@ widget_order = []
 [dock]
 concave_edge_corners = false
 enabled = true
-launcher_custom_image = "/home/inhumano/Imágenes/Iconos/bazzitescribbled.png"
+launcher_custom_image = "/home/inhumano/Pictures/Iconos/bazzitescribbled.png"
 launcher_position = "start"
 margin_edge = 5
 pinned = [ "nemo", "kitty", "org.mozilla.firefox", "com.discordapp.Discord", "steam", "dev.kineticwe.Settings" ]
@@ -49,7 +49,7 @@ smart_auto_hide = true
 address = "Mallorca"
 
 [lockscreen]
-wallpaper = "/home/inhumano/Pictures/wp8005738-anime-hd-arts-wallpapers.jpg"
+wallpaper = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
 
 [lockscreen_widgets]
 schema_version = 2
@@ -117,7 +117,7 @@ widget_order = [ "lockscreen-login-box@DP-2", "lockscreen-login-box@DP-1" ]
         show_weather = true
 
 [plugin_settings."nomadcxx/gslapper"]
-video_directory = "/home/inhumano/Imágenes/Wallpapers"
+video_directory = "/home/inhumano/Pictures/Wallpapers"
 
 [plugins]
 auto_update = "all"
@@ -157,19 +157,19 @@ wallpaper_scheme = "m3-tonal-spot"
     community_ids = [ "discord", "fastfetch" ]
 
 [wallpaper]
-directory = "/home/inhumano/Imágenes/Wallpapers"
+directory = "/home/inhumano/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
+    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
 
     [wallpaper.last]
-    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
+    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
 
     [wallpaper.monitors.DP-1]
-    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
+    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
 
     [wallpaper.monitors.DP-2]
-    path = "/home/inhumano/Imágenes/Wallpapers/0005.jpg"
+    path = "/home/inhumano/Pictures/Wallpapers/0005.jpg"
 
 [widget.monitor]
 type = "nomadcxx/gamer-mode:monitor"
