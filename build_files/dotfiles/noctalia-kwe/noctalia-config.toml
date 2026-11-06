@@ -40,7 +40,7 @@ enabled = true
 launcher_custom_image = "/home/inhumano/Imágenes/Iconos/bazzitescribbled.png"
 launcher_position = "start"
 margin_edge = 5
-pinned = [ "nemo", "kitty", "firefox", "discord", "steam", "dev.kineticwe.Settings" ]
+pinned = [ "nemo", "kitty", "firefox", "com.discordapp.Discord", "steam", "dev.kineticwe.Settings" ]
 reserve_space = false
 show_dots = true
 smart_auto_hide = true
@@ -168,7 +168,7 @@ wallpaper_scheme = "m3-tonal-spot"
         "umbriel",
         "wezterm"
     ]
-    community_ids = [ "discord", "fastfetch", "thunar" ]
+    community_ids = [ "discord", "fastfetch" ]
 
 [wallpaper]
 directory = "/home/inhumano/Imágenes/Wallpapers"
