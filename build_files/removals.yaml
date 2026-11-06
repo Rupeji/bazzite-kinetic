@@ -134,3 +134,4 @@ remove:
   - org.kde.haruna
   - org.kde.gwenview
   - org.gnome.Firmware
+  - net.codelogistics.webapps
