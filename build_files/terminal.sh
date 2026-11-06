@@ -55,12 +55,16 @@ DIR_DOTFILES_ORIGEN="/ctx/dotfiles"
 if [ -d "$DIR_DOTFILES_ORIGEN" ]; then
     echo "¡Carpeta Dotfiles detectada! Iniciando inyección organizada en /etc/skel..."
     
-    # 1. Asegurar la creación de todos los directorios en el esqueleto de usuario
+    # 1. Asegurar la creación de todos los directorios destino en el esqueleto de usuario
     mkdir -p /etc/skel/.config/kitty
     mkdir -p /etc/skel/.config/fish
     mkdir -p /etc/skel/.config/kineticwe
     mkdir -p /etc/skel/.config/niri
     mkdir -p /etc/skel/.config/noctalia-kwe
+    mkdir -p /etc/skel/.config/gtk-3.0
+    mkdir -p /etc/skel/.config/gtk-4.0
+    mkdir -p /etc/skel/.config/qt5ct
+    mkdir -p /etc/skel/.config/qt6ct
 
     # 2. Despliegue quirúrgico de las configuraciones desde sus subcarpetas organizadas
     if [ -f "$DIR_DOTFILES_ORIGEN/kitty/kitty.conf" ]; then
@@ -73,6 +77,7 @@ if [ -d "$DIR_DOTFILES_ORIGEN" ]; then
         cp "$DIR_DOTFILES_ORIGEN/fish/config.fish" /etc/skel/.config/fish/config.fish
     fi
 
+    # Inyección directa en la raíz de .config/ para que Starship funcione por defecto
     if [ -f "$DIR_DOTFILES_ORIGEN/starship/starship.toml" ]; then
         echo " -> Inyectando dotfiles de Starship..."
         cp "$DIR_DOTFILES_ORIGEN/starship/starship.toml" /etc/skel/.config/starship.toml
@@ -93,16 +98,31 @@ if [ -d "$DIR_DOTFILES_ORIGEN" ]; then
         cp -r "$DIR_DOTFILES_ORIGEN/noctalia-kwe"/* /etc/skel/.config/noctalia-kwe/ 2>/dev/null || true
     fi
 
-    # 3. Salvaguarda masiva (Copia cualquier otro archivo o subcarpeta suelta que metas en un futuro)
-    cp -r "$DIR_DOTFILES_ORIGEN"/* /etc/skel/.config/ 2>/dev/null || true
-    
-    # Limpieza de duplicados accidentales por la copia masiva del esqueleto
-    rm -rf /etc/skel/.config/kitty/kitty /etc/skel/.config/fish/fish /etc/skel/.config/starship \
-           /etc/skel/.config/kineticwe/kineticwe /etc/skel/.config/niri/niri /etc/skel/.config/noctalia-kwe/noctalia-kwe 2>/dev/null || true
+    # --- NUEVAS CARPETAS DETECTADAS EN TU REPOSITORIO ---
+    if [ -d "$DIR_DOTFILES_ORIGEN/gtk-3.0" ]; then
+        echo " -> Copiando toda la estructura interna de GTK 3.0..."
+        cp -r "$DIR_DOTFILES_ORIGEN/gtk-3.0"/* /etc/skel/.config/gtk-3.0/ 2>/dev/null || true
+    fi
+
+    if [ -d "$DIR_DOTFILES_ORIGEN/gtk-4.0" ]; then
+        echo " -> Copiando toda la estructura interna de GTK 4.0..."
+        cp -r "$DIR_DOTFILES_ORIGEN/gtk-4.0"/* /etc/skel/.config/gtk-4.0/ 2>/dev/null || true
+    fi
+
+    if [ -d "$DIR_DOTFILES_ORIGEN/qt5ct" ]; then
+        echo " -> Copiando toda la estructura interna de QT5ct..."
+        cp -r "$DIR_DOTFILES_ORIGEN/qt5ct"/* /etc/skel/.config/qt5ct/ 2>/dev/null || true
+    fi
+
+    if [ -d "$DIR_DOTFILES_ORIGEN/qt6ct" ]; then
+        echo " -> Copiando toda la estructura interna de QT6ct..."
+        cp -r "$DIR_DOTFILES_ORIGEN/qt6ct"/* /etc/skel/.config/qt6ct/ 2>/dev/null || true
+    fi
 
     # Forzar los permisos correctos para el entorno personal del usuario
     chmod -R 755 /etc/skel/.config
     echo "¡Dotfiles del esqueleto de usuario desplegados con éxito!"
+fi
 #else
 #    echo "Aviso: Carpeta 'dotfiles' no encontrada. Aplicando plantillas de emergencia básicas..."
 #    mkdir -p /etc/skel/.config/kitty /etc/skel/.config/fish
