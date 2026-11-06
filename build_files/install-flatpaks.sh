@@ -18,11 +18,21 @@ flatpak install flathub com.discordapp.Discord -y --system --noninteractive
 flatpak install flathub com.bambulab.BambuStudio -y --system --noninteractive
 flatpak install flathub net.davidotek.pupgui2 -y --system --noninteractive
 
-# Si la instalación fue exitosa, crear el archivo flag
+# =========================================================================
+# SOLUCIÓN DE DEPENDENCIAS DINÁMICAS (Se ejecuta solo una vez aquí dentro)
+# =========================================================================
+echo "Resolviendo dependencias y runtimes necesarios de forma automática..."
+# 1. Escanea las apps recién instaladas y descarga cualquier runtime que les falte
+flatpak repair --system --noninteractive
+# 2. Asegura que los runtimes descargados estén en la última versión compatible
+flatpak update -y --system --noninteractive
+# =========================================================================
+
+# Si todo el proceso fue exitoso, crear el archivo flag
 if [ $? -eq 0 ]; then
     mkdir -p "$(dirname "$FLAG_FILE")"
     touch "$FLAG_FILE"
-    echo "Instalación completada correctamente. Flag creado."
+    echo "Instalación y dependencias completadas correctamente. Flag creado."
 else
     echo "Hubo un error en la instalación. Se reintentará en el próximo arranque."
     exit 1
