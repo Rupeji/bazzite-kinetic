@@ -115,15 +115,18 @@ sed -i 's/SHELL=\/bin\/bash/SHELL=\/usr\/bin\/fish/g' /etc/default/useradd
 mkdir -p /etc/systemd/system/sockets.target.wants
 ln -sf /usr/lib/systemd/system/podman.socket /etc/systemd/system/sockets.target.wants/podman.socket
 
-# 🚀 NUEVO: Registrar la asociación nativa de Nemo con Kitty por Dconf de texto plano
-echo "Registrando asociación de Nemo con Kitty en dconf global..."
-mkdir -p /etc/dconf/db/local.d
-cat << 'EOF' > /etc/dconf/db/local.d/00-nemo-kitty
-[org/cinnamon/desktop/default-applications/terminal]
+# 🚀 REGISTRAR LA ASOCIACIÓN NATIVA DE NEMO CON KITTY (GSCHEMA OVERRIDE)
+echo "Registrando asociación de Nemo con Kitty en los esquemas globales de GLib..."
+
+mkdir -p /usr/share/glib-2.0/schemas/
+
+cat << 'EOF' > /usr/share/glib-2.0/schemas/99-nemo-kitty.gschema.override
+[org.cinnamon.desktop.default-applications.terminal]
 exec='kitty'
 EOF
-dconf update || true
 
+# Compilar los esquemas para que el sistema reconozca el cambio inmediatamente en el primer inicio
+glib-compile-schemas /usr/share/glib-2.0/schemas/
 
 # =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
