@@ -22,3 +22,6 @@ swtpm
 edk2-ovmf
 virt-viewer
 passt
+# Actualizaciones
+uupd
+topgrade
