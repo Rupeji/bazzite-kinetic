@@ -14,7 +14,7 @@ flatpak remote-add --system --if-not-exists flathub https://flathub.org
 
 # Instalar los paquetes Flatpaks deseados de forma silenciosa e ininterrumpida
 echo "Instalando Flatpaks personalizados del sistema por primera vez..."
-flatpak install flathub dev.vencord.Vesktop -y --system --noninteractive
+flatpak install flathub com.discordapp.Discord -y --system --noninteractive
 flatpak install flathub com.bambulab.BambuStudio -y --system --noninteractive
 flatpak install flathub net.davidotek.pupgui2 -y --system --noninteractive
 
