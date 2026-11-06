@@ -125,22 +125,24 @@ if [ -d "$DIR_DOTFILES_ORIGEN" ]; then
 fi
 
 # =====================================================================
-# Inyección del Esquema de Color personalizado en el esqueleto
+# Mapeo del Esquema de Color personalizado en el esqueleto
 # =====================================================================
-echo "Preparando el directorio de esquemas de color en el esqueleto..."
+echo "Comprobando la presencia de la carpeta de esquemas de color..."
 
-# 1. Asegurar la creación de la ruta completa dentro de /etc/skel
-mkdir -p /etc/skel/.local/share/color-schemes
+if [ -d "$DIR_DOTFILES_ORIGEN/color-schemes" ]; then
+    echo "¡Carpeta color-schemes detectada! Preparando el directorio en /etc/skel..."
+    
+    # 1. Asegurar la creación de la ruta completa dentro del esqueleto
+    mkdir -p /etc/skel/.local/share/color-schemes
 
-# 2. Copiar el archivo desde tu carpeta de contexto o dotfiles origen
-# (Cambia "/ctx/mi-tema.colors" por la ruta real donde tengas guardado tu archivo)
-if [ -f "/ctx/mi-tema.colors" ]; then
-    echo " -> Inyectando archivo de esquema de color..."
-    cp "/ctx/mi-tema.colors" /etc/skel/.local/share/color-schemes/
+    # 2. Copiar todo el contenido de la carpeta de origen al esqueleto
+    echo " -> Inyectando esquemas de color..."
+    cp -r "$DIR_DOTFILES_ORIGEN/color-schemes"/* /etc/skel/.local/share/color-schemes/ 2>/dev/null || true
+
+    # 3. Forzar los permisos correctos para que el usuario pueda leerlos
+    chmod -R 755 /etc/skel/.local
+    echo "¡Esquemas de color desplegados con éxito!"
 fi
-
-# 3. Ajustar los permisos para que sea accesible por el usuario
-chmod -R 755 /etc/skel/.local
 
 # =====================================================================
 # 4. Instalar la tipografía oficial para los iconos de la consola
