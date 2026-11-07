@@ -159,6 +159,13 @@ EOF
 glib-compile-schemas /usr/share/glib-2.0/schemas/
 
 # =====================================================================
+# Configuración del Hostname del Sistema
+# =====================================================================
+echo "Estableciendo el hostname predeterminado del sistema..."
+echo "bazzite" > /etc/hostname
+chmod 644 /etc/hostname
+
+# =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
 # =====================================================================
 echo "Desplegando parche de tmpfiles y SELinux para greetd..."
