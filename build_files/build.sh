@@ -161,9 +161,27 @@ glib-compile-schemas /usr/share/glib-2.0/schemas/
 # =====================================================================
 # Configuración del Hostname del Sistema
 # =====================================================================
-echo "Estableciendo el hostname predeterminado del sistema..."
+#echo "Estableciendo el hostname predeterminado del sistema..."
+#echo "bazzite" > /etc/hostname
+#chmod 644 /etc/hostname
+
+# =====================================================================
+# Configuración del Hostname Estático y Permanente
+# =====================================================================
+echo "Configurando Hostname Estático e Identificadores de Máquina..."
+
+# 1. El kernel lee esto al iniciar (Static base)
 echo "bazzite" > /etc/hostname
 chmod 644 /etc/hostname
+
+# 2. Systemd y Desktop Environments leen esto (Evita que pase a Transient)
+mkdir -p /etc
+cat << 'EOF' > /etc/machine-info
+PRETTY_HOSTNAME="Bazzite"
+DEPLOYMENT="production"
+CHASSIS="desktop"
+EOF
+chmod 644 /etc/machine-info
 
 # =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
