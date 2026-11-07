@@ -17,30 +17,36 @@ dnf5 -y remove plasma-workspace plasma-* kde-*
 # =====================================================================
 # 2. Purga completa de Homebrew (Específico para Bazzite/Ublue)
 # =====================================================================
-echo "Purgando por completo el ecosistema de Homebrew..."
+echo "==> Purgando por completo el ecosistema de Homebrew..."
 
-    systemctl disable brew-setup.service brew-update.timer brew-upgrade.timer
-    rm -rf /var/home/linuxbrew
-    rm -f /usr/share/homebrew.tar.zst
-    rm -f /usr/lib/systemd/system/brew-setup.service
-    rm -f /usr/lib/systemd/system/brew-update.service
-    rm -f /usr/lib/systemd/system/brew-upgrade.service
-    rm -f /usr/lib/systemd/system/brew-update.timer
-    rm -f /usr/lib/systemd/system/brew-upgrade.timer
-    rm -f /etc/profile.d/brew.sh
-    rm -f /etc/profile.d/brew-bash-completion.sh
-    rm -f /usr/share/applications/bbrew.desktop
-    rm -f /usr/bin/bbrew-helper
-    rm -f /usr/share/ublue-os/bbrew.png
-    rm -rf /usr/share/ublue-os/homebrew
-    rm -f /usr/lib/systemd/system-preset/01-homebrew.preset
-    rm -f /usr/share/fish/vendor_conf.d/ublue-brew.fish
-    rm -f /usr/share/fish/completions/brew.fish
-    rm -f /usr/share/ublue-os/announcements/sunshine-brew.msg.json
-    rm -f /etc/security/limits.d/30-brew-limits.conf
-    rm -f /usr/etc/security/limits.d/30-brew-limits.conf
+# Desactivar servicios
+systemctl disable brew-setup.service brew-update.timer brew-upgrade.timer
 
-echo "Purgado por completo el ecosistema de Homebrew"
+# Borrado de directorios y archivos base
+rm -rf /var/home/linuxbrew
+rm -f /usr/share/homebrew.tar.zst
+
+# Archivos de systemd
+rm -f /usr/lib/systemd/system/brew-*
+rm -f /usr/lib/systemd/system-preset/01-homebrew.preset
+
+# Integración de terminal (Bash y Fish)
+rm -f /etc/profile.d/brew*
+rm -f /usr/share/fish/vendor_conf.d/ublue-brew.fish
+rm -f /usr/share/fish/completions/brew.fish
+
+# Helpers visuales y accesos de Ublue/Bazzite
+rm -f /usr/share/applications/bbrew.desktop
+rm -f /usr/bin/bbrew-helper
+rm -f /usr/share/ublue-os/bbrew.png
+rm -rf /usr/share/ublue-os/homebrew
+rm -f /usr/share/ublue-os/announcements/sunshine-brew.msg.json
+
+# Límites de seguridad
+rm -f /etc/security/limits.d/30-brew-limits.conf
+rm -f /usr/etc/security/limits.d/30-brew-limits.conf
+
+echo "==> Ecosistema de Homebrew purgado."
 # =====================================================================
 # 2.1. Scripts PRE-borradon y purga masiva desde removals.yaml
 # =====================================================================
