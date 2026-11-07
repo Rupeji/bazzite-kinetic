@@ -123,6 +123,33 @@ remove:
   # ---------------------------------------------------------------
   - konsole
   - glibc-all-langpacks
+    # ---------------------------------------------------------------
+  # Intel: GPU, media and compute (useless with an AMD GPU)
+  # ---------------------------------------------------------------
+  - intel-gmmlib
+  - intel-igc
+  - intel-igc-libs
+  - intel-mediasdk
+  - intel-opencl
+  - intel-opencl-clang
+  - intel-vaapi-driver
+  - intel-vpl-gpu-rt
+  - libva-intel-media-driver
+
+  # ---------------------------------------------------------------
+  # Intel: power management and CPU microcode
+  # ---------------------------------------------------------------
+  - intel-lpmd
+  #- microcode_ctl  <-- MANTÉNLO COMENTADO (NO LO QUITES) SI USAS AMD
+  - thermald
+
+  # ---------------------------------------------------------------
+  # Intel firmware (no sound)
+  # ---------------------------------------------------------------
+  - intel-gpu-firmware
+  - intel-npu-firmware
+  - intel-vsc-firmware
+
   # ---------------------------------------------------------------
   # Flatpaks heredados de Bazzite eliminados en origen
   # ---------------------------------------------------------------
