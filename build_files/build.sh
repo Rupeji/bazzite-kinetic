@@ -209,6 +209,7 @@ echo "Aplicando directivas de contexto SELinux sobre el almacenamiento..."
 semanage fcontext -a -t xdm_var_lib_t '/var/lib/noctalia-greeter(/.*)?' || true
 
 echo "Apagando el gestor nativo de Bazzite y activando greetd..."
-systemctl disable sddm.service || true
+systemctl disable sddm.service || true # 👈 Desactiva SSDM
+systemctl disable plasmalogin.service || true  # 👈 Desactiva PlasmaLogin
 systemctl enable greetd.service
 systemctl set-default graphical.target
