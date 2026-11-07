@@ -9,7 +9,6 @@ firefox
 kitty
 loupe
 gnome-text-editor
-flameshot
 mediawriter
 nemo
 nemo-fileroller
