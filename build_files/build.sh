@@ -61,9 +61,13 @@ rm -f /usr/libexec/waydroid-container-restart \
       /usr/libexec/waydroid-container-stop \
       /usr/libexec/waydroid-fix-controllers
 rm -rf /usr/share/applications/Waydroid
+
+# 🧹 LIMPIEZA DE LANZADORES VISUALES DE BAZZITE (Mantenemos comandos por consola)
+echo "Eliminando accesos directos web y lanzadores gráficos redundantes..."
 rm -f /usr/share/applications/discourse.desktop
 rm -f /usr/share/applications/bazzite-documentation.desktop
 rm -f /usr/share/applications/system-update.desktop
+
 rm -rf /etc/sddm.conf.d
 
 echo "Extrayendo paquetes a eliminar de removals.yaml..."
