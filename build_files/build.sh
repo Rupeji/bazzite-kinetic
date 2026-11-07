@@ -19,20 +19,28 @@ dnf5 -y remove plasma-workspace plasma-* kde-*
 # =====================================================================
 echo "Purgando por completo el ecosistema de Homebrew..."
 
-#  Eliminar los servicios automáticos y temporizadores de actualización del sistema
-rm -f /usr/lib/systemd/system/brew-setup.service \
-      /usr/lib/systemd/system/brew-update.timer \
-      /usr/lib/systemd/system/brew-upgrade.timer \
-      /usr/lib/systemd/system-preset/00-brew.preset
+    systemctl disable brew-setup.service brew-update.timer brew-upgrade.timer
+    rm -rf /var/home/linuxbrew
+    rm -f /usr/share/homebrew.tar.zst
+    rm -f /usr/lib/systemd/system/brew-setup.service
+    rm -f /usr/lib/systemd/system/brew-update.service
+    rm -f /usr/lib/systemd/system/brew-upgrade.service
+    rm -f /usr/lib/systemd/system/brew-update.timer
+    rm -f /usr/lib/systemd/system/brew-upgrade.timer
+    rm -f /etc/profile.d/brew.sh
+    rm -f /etc/profile.d/brew-bash-completion.sh
+    rm -f /usr/share/applications/bbrew.desktop
+    rm -f /usr/bin/bbrew-helper
+    rm -f /usr/share/ublue-os/bbrew.png
+    rm -rf /usr/share/ublue-os/homebrew
+    rm -f /usr/lib/systemd/system-preset/01-homebrew.preset
+    rm -f /usr/share/fish/vendor_conf.d/ublue-brew.fish
+    rm -f /usr/share/fish/completions/brew.fish
+    rm -f /usr/share/ublue-os/announcements/sunshine-brew.msg.json
+    rm -f /etc/security/limits.d/30-brew-limits.conf
+    rm -f /usr/etc/security/limits.d/30-brew-limits.conf
 
-#  Desvincular del entorno global (Binarios y perfiles de los shells principales)
-rm -f /usr/bin/brew \
-      /etc/profile.d/brew.sh \
-      /etc/fish/conf.d/brew.fish
-
-#  Borrar el almacenamiento base en la imagen inmutable (si existiera)
-rm -rf /var/lib/homebrew
-
+echo "Purgado por completo el ecosistema de Homebrew"
 # =====================================================================
 # 2.1. Scripts PRE-borradon y purga masiva desde removals.yaml
 # =====================================================================
