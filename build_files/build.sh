@@ -7,6 +7,9 @@ set -ouex pipefail
 # =====================================================================
 dnf5 copr enable theblackdon/kwee -y
 
+# 👇 AQUÍ: Instalar los paquetes base de idioma para español e inglés antes de las purgas
+dnf5 install -y --allowerasing glibc-langpack-es glibc-langpack-en
+
 # 👇 LA CLAVE: Forzar a DNF5 a descargar la lista de paquetes nueva del COPR
 dnf5 clean all
 dnf5 makecache
@@ -158,12 +161,14 @@ EOF
 # Compilar los esquemas para que el sistema reconozca el cambio inmediatamente en el primer inicio
 glib-compile-schemas /usr/share/glib-2.0/schemas/
 
-# =====================================================================
-# Configuración del Hostname del Sistema
-# =====================================================================
-#echo "Estableciendo el hostname predeterminado del sistema..."
-#echo "bazzite" > /etc/hostname
-#chmod 644 /etc/hostname
+# Compilar los esquemas para que el sistema reconozca el cambio inmediatamente en el primer inicio
+glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+# 🌍 CONFIGURACIÓN GLOBAL DEL LOCALE (FORZAR CASTELLANO)
+echo "Estableciendo el idioma predeterminado del sistema a Castellano..."
+mkdir -p /etc
+echo "LANG=es_ES.UTF-8" > /etc/locale.conf
+chmod 644 /etc/locale.conf
 
 # =====================================================================
 # Configuración del Hostname Estático y Permanente
