@@ -10,5 +10,8 @@ kitty
 loupe
 gnome-text-editor
 mediawriter
+
+# Nemo y sus cosas
 nemo
 nemo-fileroller
+cinnamon-translations
