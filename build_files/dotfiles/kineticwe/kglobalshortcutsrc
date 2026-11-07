@@ -11,6 +11,7 @@ _k_friendly_name=Keyboard Layout Switcher
 _k_friendly_name=Applications
 kitty=Meta+T,none,kitty
 nemo=Meta+E,none,Archivos
+org.kde.spectacle=Print,none,Spectacle
 org.mozilla.firefox=Meta+B,none,Firefox
 
 [audio]
@@ -29,10 +30,6 @@ KeyboardBacklightDown=Keyboard Brightness Down,Keyboard Brightness Down,Keyboard
 KeyboardBacklightToggle=none,none,Toggle Keyboard Backlight
 KeyboardBacklightUp=Keyboard Brightness Up,Keyboard Brightness Up,Keyboard Backlight Up
 _k_friendly_name=Brightness
-
-[custom-commands]
-_k_friendly_name=Custom Commands
-cmd-1=Print,none,flameshot gui
 
 [kineticwe]
 Activate Window Demanding Attention=none,none,Activate Window Demanding Attention

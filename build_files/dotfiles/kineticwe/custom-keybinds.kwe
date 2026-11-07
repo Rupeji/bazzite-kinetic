@@ -5,11 +5,9 @@
 kitty=kitty
 org.mozilla.firefox=Firefox
 nemo=Archivos
+org.kde.spectacle=Spectacle
 [applications:exec]
 kitty=kitty
 org.mozilla.firefox=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=firefox --file-forwarding org.mozilla.firefox @@u  @@
 nemo=nemo
-[custom-commands]
-cmd-1=flameshot gui
-[custom-commands:exec]
-cmd-1=flameshot gui
+org.kde.spectacle=/usr/bin/spectacle

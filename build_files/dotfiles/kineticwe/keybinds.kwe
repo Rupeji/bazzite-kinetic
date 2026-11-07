@@ -12,5 +12,4 @@ NoctaliaToggleSettings=Meta+Z
 nemo=Meta+E
 org.mozilla.firefox=Meta+B
 kitty=Meta+T
-[custom-commands][Global Shortcuts]
-cmd-1=Print
+org.kde.spectacle=Print
