@@ -47,6 +47,12 @@ rm -f /etc/security/limits.d/30-brew-limits.conf
 rm -f /usr/etc/security/limits.d/30-brew-limits.conf
 
 echo "==> Ecosistema de Homebrew purgado."
+
+# Eliminar por completo el ejecutable y el acceso directo de Spectacle del build
+echo "Eliminando binarios residuales de Spectacle..."
+rm -f /usr/bin/spectacle
+rm -f /usr/share/applications/org.kde.spectacle.desktop
+
 # =====================================================================
 # 2.1. Scripts PRE-borradon y purga masiva desde removals.yaml
 # =====================================================================
