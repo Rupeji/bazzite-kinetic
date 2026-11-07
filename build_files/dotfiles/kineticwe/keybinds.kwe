@@ -10,6 +10,6 @@ NoctaliaWallpaperRandom=Meta+W
 NoctaliaToggleSettings=Meta+Z
 [applications][Global Shortcuts]
 nemo=Meta+E
-org.mozilla.firefox=Meta+B
+org.mozilla.firefox=Ctrl+B
 kitty=Meta+T
 org.kde.spectacle=Print

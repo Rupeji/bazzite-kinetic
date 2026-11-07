@@ -3,11 +3,11 @@
 # keybinds categories; chords live in keybinds.kwe and the daemon.
 [applications]
 kitty=kitty
-org.mozilla.firefox=Firefox
 nemo=Archivos
 org.kde.spectacle=Spectacle
+org.mozilla.firefox=Firefox
 [applications:exec]
 kitty=kitty
-org.mozilla.firefox=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=firefox --file-forwarding org.mozilla.firefox @@u  @@
 nemo=nemo
 org.kde.spectacle=/usr/bin/spectacle
+org.mozilla.firefox=firefox

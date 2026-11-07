@@ -12,7 +12,7 @@ _k_friendly_name=Applications
 kitty=Meta+T,none,kitty
 nemo=Meta+E,none,Archivos
 org.kde.spectacle=Print,none,Spectacle
-org.mozilla.firefox=Meta+B,none,Firefox
+org.mozilla.firefox=Ctrl+B,none,Firefox
 
 [audio]
 AudioMicMute=Microphone Mute,Microphone Mute,Mute Microphone
