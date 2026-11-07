@@ -134,6 +134,5 @@ remove:
   - org.kde.haruna
   - org.kde.gwenview
   - org.gnome.Firmware
-  - net.codelogistics.webapps
   # Quitar el gestor de Aplicaciones Web heredado
   - webapp-manager-master.mint22
