@@ -43,7 +43,7 @@ margin_edge = 5
 pinned = [
     "nemo",
     "kitty",
-    "firefox",
+    "org.mozilla.firefox",
     "com.bambulab.BambuStudio",
     "com.discordapp.Discord",
     "steam",
