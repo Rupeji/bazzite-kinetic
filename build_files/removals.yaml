@@ -150,6 +150,52 @@ remove:
   - intel-npu-firmware
   - intel-vsc-firmware
 
+
+  # ---------------------------------------------------------------
+  # Printing
+  # ---------------------------------------------------------------
+  - bluez-cups
+  - braille-printer-app
+  - c2esp
+  - cups
+  - cups-browsed
+  - cups-client
+  - cups-filters
+  - cups-filters-driverless
+  - cups-ipptool
+  - dymo-cups-drivers
+  - ghostscript
+  - ghostscript-tools-fontutils
+  - ghostscript-tools-printing
+  - gutenprint
+  - gutenprint-cups
+  - gutenprint-libs
+  - hplip
+  - hplip-common
+  - hplip-libs
+  - ipp-usb
+  - libcupsfilters
+  - libieee1284
+  - libppd
+  - libsane-airscan
+  - libsane-hpaio
+  - mpage
+  - paps
+  - plasma-print-manager
+  - plasma-print-manager-libs
+  - printer-driver-brlaser
+  - ptouch-driver
+  - python3-cups
+  - sane-airscan
+  - sane-backends
+  - sane-backends-drivers-cameras
+  - sane-backends-drivers-scanners
+  - sane-backends-libs
+  - splix
+  - system-config-printer-libs
+  - system-config-printer-udev
+  - uld
+  
   # ---------------------------------------------------------------
   # Flatpaks heredados de Bazzite eliminados en origen
   # ---------------------------------------------------------------
