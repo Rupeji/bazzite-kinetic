@@ -10,7 +10,7 @@ DOMINIO_STARSHIP="https://starship.rs"
 ARCHIVO_STARSHIP="install.sh"
 URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP}/${ARCHIVO_STARSHIP}" | tr -d ' ')
 
- 🌟 CORRECCIÓN: Pasamos solo la plataforma sin duplicar la arquitectura (x86_64 se autodetecta)
+# 🌟 CORRECCIÓN: Pasamos solo la plataforma sin duplicar la arquitectura (x86_64 se autodetecta)
 curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin" --platform "unknown-linux-musl"
 
 # =====================================================================
