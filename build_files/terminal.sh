@@ -19,8 +19,8 @@ echo "¡Starship Prompt inyectado con éxito!"
 # =====================================================================
 echo "Inyectando paquete gSlapper desde los archivos locales..."
 
-# Definimos el nombre exacto del archivo RPM local
-ARCHIVO_GSLAPPER_RPM="gslapper-1.5.3-1.fedora42.x86_64.rpm"
+# 🌟 CORRECCIÓN DEFINITIVA: Cambiamos al nombre neutro que genera tu bot
+ARCHIVO_GSLAPPER_RPM="gslapper.rpm"
 
 # Verificamos si existe en tu carpeta compartida /ctx/recursos/
 if [ -f "/ctx/recursos/$ARCHIVO_GSLAPPER_RPM" ]; then
