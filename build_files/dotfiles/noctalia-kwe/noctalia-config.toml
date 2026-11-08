@@ -139,6 +139,9 @@ lang = "es"
 panel_anchor_bar = "default"
 polkit_agent = true
 
+    [shell.greeter_sync]
+    auto_sync = true
+
 [theme]
 source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
