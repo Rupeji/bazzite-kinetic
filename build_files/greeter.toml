@@ -3,3 +3,9 @@ path = "/usr/share/backgrounds/noctalia/login-background.jpg"
 fill_mode = "crop"
 blur = 0.0
 tint = 0.0
+
+[appearance.theme]
+# Indicamos a Noctalia que genere los tonos de la UI a partir del fondo de pantalla
+source = "wallpaper" 
+variant = "vibrant"    # Opciones: vibrant, expressive, tonal_spot, fruit_salad
+mode = "dark"          # Fuerza el modo oscuro en el greeter para evitar destellos blancos
