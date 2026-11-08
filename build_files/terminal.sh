@@ -25,17 +25,15 @@ set -ouex pipefail
 # =====================================================================
 # 1. Instalar Starship Prompt desde los archivos locales
 # =====================================================================
-echo "Inyectando Starship Prompt de forma local desde dotfiles..."
+echo "Inyectando Starship Prompt de forma local en el sistema..."
 
-# Copiamos directamente el binario desde la subcarpeta compartida en /ctx
-cp /ctx/dotfiles/starship/starship /usr/bin/starship
+# Copiamos directamente el binario desde la carpeta compartida /ctx
+cp /ctx/starship /usr/bin/starship
 
 # Aplicamos los permisos necesarios de ejecución
 chmod 755 /usr/bin/starship
 
 echo "¡Starship Prompt inyectado con éxito!"
-
-
 
 # =====================================================================
 # 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm)
