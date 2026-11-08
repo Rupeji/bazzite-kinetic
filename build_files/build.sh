@@ -205,8 +205,8 @@ mkdir -p /etc/greetd
 cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
-# 👇 CONFIGURACIÓN DEL FONDO DE PANTALLA PARA NOCTALIA GREETER 👇
-echo "Configurando el fondo de pantalla estático para Noctalia Greeter..."
+# 👇 CONFIGURACIÓN DEL FONDO DE PANTALLA DINÁMICO PARA NOCTALIA GREETER 👇
+echo "Configurando el fondo de pantalla y colores dinámicos para Noctalia Greeter..."
 # 1. Crear directorios del sistema para la configuración y los fondos
 mkdir -p /etc/noctalia
 mkdir -p /usr/share/backgrounds/noctalia
@@ -215,14 +215,18 @@ mkdir -p /usr/share/backgrounds/noctalia
 cp /ctx/greeter.toml /etc/noctalia/greeter.toml
 chmod 644 /etc/noctalia/greeter.toml
 
-# 3. Extraer el wallpaper 0005.jpg de tu esqueleto de usuario ya descargado
+# 3. Vincular dinámicamente el wallpaper elegido desde tu repositorio IconsWalls
 if [ -d "/etc/skel/Pictures/Wallpapers" ]; then
-    if [ -f "/etc/skel/Pictures/Wallpapers/0005.jpg" ]; then
-        echo " -> Copiando 0005.jpg al directorio de fondos globales..."
-        cp "/etc/skel/Pictures/Wallpapers/0005.jpg" /usr/share/backgrounds/noctalia/login-background.jpg
+    # 🌟 CONFIGURACIÓN FUTURA: Si cambias de fondo, solo edita el nombre "0005.jpg" aquí abajo 🌟
+    WALLPAPER_SELECCIONADO="0005.jpg"
+    
+    if [ -f "/etc/skel/Pictures/Wallpapers/$WALLPAPER_SELECCIONADO" ]; then
+        echo " -> Enlazando fondo $WALLPAPER_SELECCIONADO para generación de colores de Noctalia..."
+        # Copiamos el archivo original al destino del sistema
+        cp "/etc/skel/Pictures/Wallpapers/$WALLPAPER_SELECCIONADO" /usr/share/backgrounds/noctalia/login-background.jpg
         chmod 644 /usr/share/backgrounds/noctalia/login-background.jpg
     else
-        echo "Aviso: No se encontró el archivo 0005.jpg en /etc/skel/Pictures/Wallpapers"
+        echo "Aviso: No se encontró el archivo $WALLPAPER_SELECCIONADO en /etc/skel/Pictures/Wallpapers"
     fi
 fi
 # 👆 FIN DE LA CONFIGURACIÓN DEL WALLPAPER 👆
