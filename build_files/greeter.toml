@@ -1,0 +1,6 @@
+[appearance.wallpaper]
+# Apuntamos a la ruta global del sistema donde inyectaremos el fondo
+path = "/usr/share/backgrounds/noctalia/login-background.webp"
+fill_mode = "crop"
+blur = 0.0
+tint = 0.0
