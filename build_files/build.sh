@@ -205,9 +205,9 @@ mkdir -p /etc/greetd
 cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
-# 👇 NUEVAS LÍNEAS COMPATIBLES CON TU MÓDULO DE RECURSOS (NOCTALIA WALLPAPER) 👇
+# 👇 CONFIGURACIÓN DEL FONDO DE PANTALLA PARA NOCTALIA GREETER 👇
 echo "Configurando el fondo de pantalla estático para Noctalia Greeter..."
-# 1. Crear directorios del sistema para Noctalia y los fondos
+# 1. Crear directorios del sistema para la configuración y los fondos
 mkdir -p /etc/noctalia
 mkdir -p /usr/share/backgrounds/noctalia
 
@@ -215,19 +215,23 @@ mkdir -p /usr/share/backgrounds/noctalia
 cp /ctx/greeter.toml /etc/noctalia/greeter.toml
 chmod 644 /etc/noctalia/greeter.toml
 
-# 3. Extraer el wallpaper que desees de tu esqueleto de usuario ya descargado
-# (Cambia "nombre_de_tu_imagen.jpg/png/webp" por el nombre real de tu archivo en IconsWalls)
+# 3. Extraer el wallpaper 0005.jpg de tu esqueleto de usuario ya descargado
 if [ -d "/etc/skel/Pictures/Wallpapers" ]; then
-    cp "/etc/skel/Pictures/Wallpapers/nombre_de_tu_imagen.webp" /usr/share/backgrounds/noctalia/login-background.webp
-    chmod 644 /usr/share/backgrounds/noctalia/login-background.webp
+    if [ -f "/etc/skel/Pictures/Wallpapers/0005.jpg" ]; then
+        echo " -> Copiando 0005.jpg al directorio de fondos globales..."
+        cp "/etc/skel/Pictures/Wallpapers/0005.jpg" /usr/share/backgrounds/noctalia/login-background.jpg
+        chmod 644 /usr/share/backgrounds/noctalia/login-background.jpg
+    else
+        echo "Aviso: No se encontró el archivo 0005.jpg en /etc/skel/Pictures/Wallpapers"
+    fi
 fi
-# 👆 FIN DE LAS NUEVAS LÍNEAS PARA EL WALLPAPER 👆
+# 👆 FIN DE LA CONFIGURACIÓN DEL WALLPAPER 👆
 
 echo "Aplicando directivas de contexto SELinux sobre el almacenamiento..."
 semanage fcontext -a -t xdm_var_lib_t '/var/lib/noctalia-greeter(/.*)?' || true
 
 echo "Apagando el gestor nativo de Bazzite y activando greetd..."
-systemctl disable sddm.service || true 
-systemctl disable plasmalogin.service || true  
+systemctl disable sddm.service || true # 👈 Desactiva SSDM
+systemctl disable plasmalogin.service || true  # 👈 Desactiva PlasmaLogin
 systemctl enable greetd.service
 systemctl set-default graphical.target
