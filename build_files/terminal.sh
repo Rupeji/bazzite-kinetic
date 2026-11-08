@@ -28,7 +28,7 @@ set -ouex pipefail
 echo "Inyectando Starship Prompt de forma local en el sistema..."
 
 # Copiamos directamente el binario desde la carpeta compartida /ctx
-cp /ctx/starship /usr/bin/starship
+cp /ctx/recursos/starship /usr/bin/starship
 
 # Aplicamos los permisos necesarios de ejecución
 chmod 755 /usr/bin/starship
@@ -212,25 +212,33 @@ if [ -f /tmp/Tela-icon-theme/install.sh ]; then
 fi
 rm -rf /tmp/Tela-icon-theme
 
-# 5.2. Instalación Global de Cursores Bibata Modern
-echo "Descargando e instalando la última versión de Cursores Bibata..."
-rm -f /tmp/Bibata-Modern-Classic.tar.xz /tmp/Bibata-Modern-Ice.tar.xz
+# =====================================================================
+# Instalar Cursores Bibata desde los archivos locales
+# =====================================================================
+echo "Inyectando cursores Bibata de forma local en el sistema..."
+mkdir -p /usr/share/icons/
 
-URL_CLASSIC_CON_ESPACIOS="https://github .com /ful1e5 /Bibata_Cursor /releases /download /v2.0.7 /Bibata-Modern-Classic .tar .xz"
-URL_ICE_CON_ESPACIOS="https://github .com /ful1e5 /Bibata_Cursor /releases /download /v2.0.7 /Bibata-Modern-Ice .tar .xz"
-
-URL_CLASSIC=$(echo "$URL_CLASSIC_CON_ESPACIOS" | tr -d ' ')
-URL_ICE=$(echo "$URL_ICE_CON_ESPACIOS" | tr -d ' ')
-
-curl -L "$URL_CLASSIC" -o /tmp/Bibata-Modern-Classic.tar.xz
-curl -L "$URL_ICE" -o /tmp/Bibata-Modern-Ice.tar.xz
-
-if [ -s /tmp/Bibata-Modern-Classic.tar.xz ] && [ -s /tmp/Bibata-Modern-Ice.tar.xz ]; then
-    tar -xf /tmp/Bibata-Modern-Classic.tar.xz -C "/usr/share/icons/"
-    tar -xf /tmp/Bibata-Modern-Ice.tar.xz -C "/usr/share/icons/"
+# 1. Descomprimir Classic directamente desde el almacenamiento compartida local
+if [ -f "/ctx/recursos/Bibata-Modern-Classic.tar.xz" ]; then
+    echo " -> Descomprimiendo Bibata Modern Classic..."
+    tar -xf /ctx/recursos/Bibata-Modern-Classic.tar.xz -C /usr/share/icons/
+else
+    echo "Error crítico: No se encontró Bibata-Modern-Classic.tar.xz en /ctx/recursos/"
+    exit 1
 fi
-rm -f /tmp/Bibata-Modern-Classic.tar.xz /tmp/Bibata-Modern-Ice.tar.xz
 
+# 2. Descomprimir Ice directamente desde el almacenamiento compartida local
+if [ -f "/ctx/recursos/Bibata-Modern-Ice.tar.xz" ]; then
+    echo " -> Descomprimiendo Bibata Modern Ice..."
+    tar -xf /ctx/recursos/Bibata-Modern-Ice.tar.xz -C /usr/share/icons/
+else
+    echo "Error crítico: No se encontró Bibata-Modern-Ice.tar.xz en /ctx/recursos/"
+    exit 1
+fi
+
+# Asegurar permisos correctos para que el sistema y el usuario puedan usarlos
+chmod -R 755 /usr/share/icons/Bibata-Modern-*
+echo "¡Cursores inyectados correctamente!"
 
 # =====================================================================
 # 6. Descarga e Inyección de Recursos Globales en Pictures (Iconos y Wallpapers)
