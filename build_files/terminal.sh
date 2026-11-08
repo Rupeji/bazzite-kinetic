@@ -2,27 +2,6 @@
 set -ouex pipefail
 
 # =====================================================================
-# 1. Descargar e instalar la ÚLTIMA versión de Starship Prompt
-# =====================================================================
-#echo "Descargando e instalando Starship Prompt en el sistema de forma directa..."
-
-# 🌟 Usamos una URL directa e inmutable al binario precompilado para saltarnos el script interactivo
-#URL_STARSHIP_BINARIA="https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz"
-
-# Descargamos el tarball directamente en el directorio temporal
-#curl -sSL -o /tmp/starship.tar.gz "$URL_STARSHIP_BINARIA"
-
-# Descomprimimos el ejecutable directamente dentro de la ruta del sistema
-#tar -xzf /tmp/starship.tar.gz -C /usr/bin/
-
-# Aplicamos los permisos necesarios y limpiamos los archivos residuales
-#chmod 755 /usr/bin/starship
-#rm -f /tmp/starship.tar.gz
-
-#echo "¡Starship Prompt instalado con éxito!"
-
-
-# =====================================================================
 # 1. Instalar Starship Prompt desde los archivos locales
 # =====================================================================
 echo "Inyectando Starship Prompt de forma local en el sistema..."
@@ -155,30 +134,20 @@ if [ -d "$DIR_DOTFILES_ORIGEN/color-schemes" ]; then
 fi
 
 # =====================================================================
-# 4. Instalar la tipografía oficial para los iconos de la consola
+# 4. Instalar fuentes locales estables
 # =====================================================================
+echo "Inyectando tipografías JetBrainsMono Nerd Font desde recursos locales..."
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
-echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 
-# Definimos las URLs con espacios para evitar cualquier tipo de recorte
-URL_REGULAR_ESPACIOS="https://github .com /ryanoasis /nerd-fonts /raw /master /patched-fonts /JetBrainsMono /Ligatures /Regular /JetBrainsMonoNerdFont-Regular .ttf"
-URL_BOLD_ESPACIOS="https://github .com /ryanoasis /nerd-fonts /raw /master /patched-fonts /JetBrainsMono /Ligatures /Bold /JetBrainsMonoNerdFont-Bold .ttf"
-
-# Limpiamos los espacios dinámicamente antes de lanzar el comando curl
-URL_REGULAR_LIMPIA=$(echo "$URL_REGULAR_ESPACIOS" | tr -d ' ')
-URL_BOLD_LIMPIA=$(echo "$URL_BOLD_ESPACIOS" | tr -d ' ')
-
-# Descarga directa de los archivos binarios TTF parcheados oficiales
-curl -sSL -o /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_REGULAR_LIMPIA"
-curl -sSL -o /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Bold.ttf "$URL_BOLD_LIMPIA"
-
-# Asegurar los permisos de lectura correctos del sistema
-chmod 644 /usr/share/fonts/jetbrains-mono-nerd/*.ttf
-
-# Actualizar la caché de fuentes del sistema de la ISO
-fc-cache -f -v
-echo "¡Tipografías inyectadas y caché actualizada con éxito!"
-
+if [ -f "/ctx/recursos/JetBrainsMonoNerdFont-Regular.ttf" ]; then
+    cp /ctx/recursos/JetBrainsMonoNerdFont-Regular.ttf /usr/share/fonts/jetbrains-mono-nerd/
+    cp /ctx/recursos/JetBrainsMonoNerdFont-Bold.ttf /usr/share/fonts/jetbrains-mono-nerd/
+    chmod 644 /usr/share/fonts/jetbrains-mono-nerd/*.ttf
+    fc-cache -f -v
+    echo "¡Tipografías locales aplicadas con éxito!"
+else
+    echo "Aviso: No se encontraron fuentes en /ctx/recursos/, saltando paso."
+fi
 # =====================================================================
 # 5. Instalación de Temas Visuales Globales (Tela Icon y Bibata Cursors)
 # =====================================================================
