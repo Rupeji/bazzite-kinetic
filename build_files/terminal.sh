@@ -151,23 +151,28 @@ fi
 # =====================================================================
 # 5. Instalación de Temas Visuales Globales (Tela Icon y Bibata Cursors)
 # =====================================================================
-echo "Iniciando la instalación de Temas Visuales del sistema (Tela y Bibata)..."
+echo "Iniciando la instalación de Temas Visuales locales..."
 mkdir -p /usr/share/icons
 
-# 5.1. Instalación Global de Iconos Tela
-echo "Descargando e instalando la última versión de Tela Icon Theme..."
-rm -rf /tmp/Tela-icon-theme
-
-URL_TELA_CON_ESPACIOS="https://github .com /vinceliuice /Tela-icon-theme .git"
-URL_TELA=$(echo "$URL_TELA_CON_ESPACIOS" | tr -d ' ')
-
-git clone --depth 1 "$URL_TELA" /tmp/Tela-icon-theme
-
-if [ -f /tmp/Tela-icon-theme/install.sh ]; then
-    chmod +x /tmp/Tela-icon-theme/install.sh
-    /tmp/Tela-icon-theme/install.sh -d "/usr/share/icons"
+# 5.1. Desplegar Iconos Tela desde el empaquetado local neutro del Bot
+if [ -f "/ctx/recursos/Tela-icon-theme.tar.gz" ]; then
+    echo " -> Descomprimiendo paquete local neutro de iconos Tela..."
+    rm -rf /tmp/Tela-icon-theme
+    
+    # Descomprimimos el archivo comprimido que preparó el bot en el directorio temporal
+    tar -xzf /ctx/recursos/Tela-icon-theme.tar.gz -C /tmp/
+    
+    # Ejecutamos el instalador oficial de Tela que viene dentro de la carpeta
+    if [ -f /tmp/Tela-icon-theme/install.sh ]; then
+        chmod +x /tmp/Tela-icon-theme/install.sh
+        /tmp/Tela-icon-theme/install.sh -d "/usr/share/icons"
+    fi
+    rm -rf /tmp/Tela-icon-theme
+    echo " ✅ Iconos Tela instalados con éxito desde recursos locales."
+else
+    echo "Error crítico: No se encontró Tela-icon-theme.tar.gz en /ctx/recursos/"
+    exit 1
 fi
-rm -rf /tmp/Tela-icon-theme
 
 # =====================================================================
 # Instalar Cursores Bibata desde los archivos locales
@@ -175,7 +180,7 @@ rm -rf /tmp/Tela-icon-theme
 echo "Inyectando cursores Bibata de forma local en el sistema..."
 mkdir -p /usr/share/icons/
 
-# 1. Descomprimir Classic directamente desde el almacenamiento compartida local
+# 1. Descomprimir Classic directamente desde el almacenamiento compartido local
 if [ -f "/ctx/recursos/Bibata-Modern-Classic.tar.xz" ]; then
     echo " -> Descomprimiendo Bibata Modern Classic..."
     tar -xf /ctx/recursos/Bibata-Modern-Classic.tar.xz -C /usr/share/icons/
@@ -184,7 +189,7 @@ else
     exit 1
 fi
 
-# 2. Descomprimir Ice directamente desde el almacenamiento compartida local
+# 2. Descomprimir Ice directamente desde el almacenamiento compartido local
 if [ -f "/ctx/recursos/Bibata-Modern-Ice.tar.xz" ]; then
     echo " -> Descomprimiendo Bibata Modern Ice..."
     tar -xf /ctx/recursos/Bibata-Modern-Ice.tar.xz -C /usr/share/icons/
