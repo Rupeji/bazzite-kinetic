@@ -4,22 +4,38 @@ set -ouex pipefail
 # =====================================================================
 # 1. Descargar e instalar la ÚLTIMA versión de Starship Prompt
 # =====================================================================
-echo "Descargando e instalando Starship Prompt en el sistema de forma directa..."
+#echo "Descargando e instalando Starship Prompt en el sistema de forma directa..."
 
 # 🌟 Usamos una URL directa e inmutable al binario precompilado para saltarnos el script interactivo
-URL_STARSHIP_BINARIA="https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz"
+#URL_STARSHIP_BINARIA="https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz"
 
 # Descargamos el tarball directamente en el directorio temporal
-curl -sSL -o /tmp/starship.tar.gz "$URL_STARSHIP_BINARIA"
+#curl -sSL -o /tmp/starship.tar.gz "$URL_STARSHIP_BINARIA"
 
 # Descomprimimos el ejecutable directamente dentro de la ruta del sistema
-tar -xzf /tmp/starship.tar.gz -C /usr/bin/
+#tar -xzf /tmp/starship.tar.gz -C /usr/bin/
 
 # Aplicamos los permisos necesarios y limpiamos los archivos residuales
-chmod 755 /usr/bin/starship
-rm -f /tmp/starship.tar.gz
+#chmod 755 /usr/bin/starship
+#rm -f /tmp/starship.tar.gz
 
-echo "¡Starship Prompt instalado con éxito!"
+#echo "¡Starship Prompt instalado con éxito!"
+
+
+# =====================================================================
+# 1. Instalar Starship Prompt desde los archivos locales
+# =====================================================================
+echo "Inyectando Starship Prompt de forma local desde dotfiles..."
+
+# Copiamos directamente el binario desde la subcarpeta compartida en /ctx
+cp /ctx/dotfiles/starship/starship /usr/bin/starship
+
+# Aplicamos los permisos necesarios de ejecución
+chmod 755 /usr/bin/starship
+
+echo "¡Starship Prompt inyectado con éxito!"
+
+
 
 # =====================================================================
 # 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm)
