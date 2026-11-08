@@ -4,14 +4,22 @@ set -ouex pipefail
 # =====================================================================
 # 1. Descargar e instalar la ÚLTIMA versión de Starship Prompt
 # =====================================================================
-echo "Descargando e instalando Starship Prompt en el sistema..."
+echo "Descargando e instalando Starship Prompt en el sistema de forma directa..."
 
-DOMINIO_STARSHIP="https://starship.rs"
-ARCHIVO_STARSHIP="install.sh"
-URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP}/${ARCHIVO_STARSHIP}" | tr -d ' ')
+# 🌟 Usamos una URL directa e inmutable al binario precompilado para saltarnos el script interactivo
+URL_STARSHIP_BINARIA="https://github.com/starship/starship/releases/latest/download/starship-x86_64-unknown-linux-musl.tar.gz"
 
-# 🌟 CORRECCIÓN: Pasamos solo la plataforma sin duplicar la arquitectura (x86_64 se autodetecta)
-curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin" --platform "unknown-linux-musl"
+# Descargamos el tarball directamente en el directorio temporal
+curl -sSL -o /tmp/starship.tar.gz "$URL_STARSHIP_BINARIA"
+
+# Descomprimimos el ejecutable directamente dentro de la ruta del sistema
+tar -xzf /tmp/starship.tar.gz -C /usr/bin/
+
+# Aplicamos los permisos necesarios y limpiamos los archivos residuales
+chmod 755 /usr/bin/starship
+rm -f /tmp/starship.tar.gz
+
+echo "¡Starship Prompt instalado con éxito!"
 
 # =====================================================================
 # 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm)
