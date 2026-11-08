@@ -150,14 +150,24 @@ fi
 mkdir -p /usr/share/fonts/jetbrains-mono-nerd
 echo "Descargando tipografía JetBrainsMono Nerd Font para los iconos..."
 
-DOMINIO_FONTS="https://github.com"
-REPOSITORIO_FONTS="ryanoasis/nerd-fonts/releases/latest/download"
-ARCHIVO_FONTS="JetBrainsMono.tar.xz"
-URL_FONTS_LIMPIA=$(echo "${DOMINIO_FONTS}/${REPOSITORIO_FONTS}/${ARCHIVO_FONTS}" | tr -d ' ')
+# Definimos las URLs con espacios para evitar cualquier tipo de recorte
+URL_REGULAR_ESPACIOS="https://github .com /ryanoasis /nerd-fonts /raw /master /patched-fonts /JetBrainsMono /Ligatures /Regular /JetBrainsMonoNerdFont-Regular .ttf"
+URL_BOLD_ESPACIOS="https://github .com /ryanoasis /nerd-fonts /raw /master /patched-fonts /JetBrainsMono /Ligatures /Bold /JetBrainsMonoNerdFont-Bold .ttf"
 
-curl -sSL "$URL_FONTS_LIMPIA" | tar -xJ -C /usr/share/fonts/jetbrains-mono-nerd/
+# Limpiamos los espacios dinámicamente antes de lanzar el comando curl
+URL_REGULAR_LIMPIA=$(echo "$URL_REGULAR_ESPACIOS" | tr -d ' ')
+URL_BOLD_LIMPIA=$(echo "$URL_BOLD_ESPACIOS" | tr -d ' ')
+
+# Descarga directa de los archivos binarios TTF parcheados oficiales
+curl -sSL -o /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Regular.ttf "$URL_REGULAR_LIMPIA"
+curl -sSL -o /usr/share/fonts/jetbrains-mono-nerd/JetBrainsMonoNerdFont-Bold.ttf "$URL_BOLD_LIMPIA"
+
+# Asegurar los permisos de lectura correctos del sistema
+chmod 644 /usr/share/fonts/jetbrains-mono-nerd/*.ttf
+
+# Actualizar la caché de fuentes del sistema de la ISO
 fc-cache -f -v
-
+echo "¡Tipografías inyectadas y caché actualizada con éxito!"
 
 # =====================================================================
 # 5. Instalación de Temas Visuales Globales (Tela Icon y Bibata Cursors)
