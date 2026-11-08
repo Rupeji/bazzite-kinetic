@@ -205,11 +205,29 @@ mkdir -p /etc/greetd
 cp /ctx/config.toml /etc/greetd/config.toml
 chmod 644 /etc/greetd/config.toml
 
+# 👇 NUEVAS LÍNEAS COMPATIBLES CON TU MÓDULO DE RECURSOS (NOCTALIA WALLPAPER) 👇
+echo "Configurando el fondo de pantalla estático para Noctalia Greeter..."
+# 1. Crear directorios del sistema para Noctalia y los fondos
+mkdir -p /etc/noctalia
+mkdir -p /usr/share/backgrounds/noctalia
+
+# 2. Copiar tu archivo greeter.toml desde el contexto de build_files
+cp /ctx/greeter.toml /etc/noctalia/greeter.toml
+chmod 644 /etc/noctalia/greeter.toml
+
+# 3. Extraer el wallpaper que desees de tu esqueleto de usuario ya descargado
+# (Cambia "nombre_de_tu_imagen.jpg/png/webp" por el nombre real de tu archivo en IconsWalls)
+if [ -d "/etc/skel/Pictures/Wallpapers" ]; then
+    cp "/etc/skel/Pictures/Wallpapers/nombre_de_tu_imagen.webp" /usr/share/backgrounds/noctalia/login-background.webp
+    chmod 644 /usr/share/backgrounds/noctalia/login-background.webp
+fi
+# 👆 FIN DE LAS NUEVAS LÍNEAS PARA EL WALLPAPER 👆
+
 echo "Aplicando directivas de contexto SELinux sobre el almacenamiento..."
 semanage fcontext -a -t xdm_var_lib_t '/var/lib/noctalia-greeter(/.*)?' || true
 
 echo "Apagando el gestor nativo de Bazzite y activando greetd..."
-systemctl disable sddm.service || true # 👈 Desactiva SSDM
-systemctl disable plasmalogin.service || true  # 👈 Desactiva PlasmaLogin
+systemctl disable sddm.service || true 
+systemctl disable plasmalogin.service || true  
 systemctl enable greetd.service
 systemctl set-default graphical.target
