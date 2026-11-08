@@ -193,6 +193,26 @@ EOF
 chmod 644 /etc/machine-info
 
 # =====================================================================
+# 🚀 PURGA ULTRA AGRESIVA DE ESPACIO (DOCUMENTACIÓN, MANUALES E IDIOMAS)
+# =====================================================================
+echo "Fulminando páginas de manual, infos y documentación pesada..."
+rm -rf /usr/share/doc/*
+rm -rf /usr/share/man/*
+rm -rf /usr/share/info/*
+rm -rf /usr/share/gnome/help/*
+
+echo "Purgando diccionarios de corrección ortográfica de idiomas no deseados..."
+# Mantenemos únicamente las variantes de inglés y español
+find /usr/share/myspell/ -type f ! -name "*es*" ! -name "*en*" -delete 2>/dev/null || true
+find /usr/share/hunspell/ -type f ! -name "*es*" ! -name "*en*" -delete 2>/dev/null || true
+
+echo "Purgando catálogos de traducción (.mo) residuales de otros idiomas..."
+# Buscamos en /usr/share/locale y eliminamos cualquier carpeta que no sea "es", "en" o variantes compatibles
+find /usr/share/locale/ -maxdepth 1 -type d ! -name "locale" ! -name "es" ! -name "es_ES" ! -name "en" ! -name "en_US" ! -name "en_GB" -exec rm -rf {} + 2>/dev/null || true
+# =====================================================================
+
+
+# =====================================================================
 # 7. Configuración del Greeter Seguro (Estilo Nativo de Fedora)
 # =====================================================================
 echo "Desplegando parche de tmpfiles y SELinux para greetd..."
