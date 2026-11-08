@@ -195,7 +195,43 @@ remove:
   - system-config-printer-libs
   - system-config-printer-udev
   - uld
+
+  # ---------------------------------------------------------------
+  # Firmwares redundantes de Red y Conectividad (No afectan a Ethernet/Wi-Fi estándar)
+  # ---------------------------------------------------------------
+  #- b43-openfwwf              # Firmware para tarjetas Broadcom viejas de portátiles
+  #- qcom-firmware-native      # Firmwares nativos para SoCs Qualcomm
   
+  # ---------------------------------------------------------------
+  # Soporte de Escáneres y Dispositivos Biométricos
+  # ---------------------------------------------------------------
+  - fprintd                   # Demonio de lectura de huellas dactilares
+  - fprintd-pam               # Integración de huellas con PAM (No lo necesitas en Desktop)
+  - libfprint                 # Librería base de huellas
+  
+  # ---------------------------------------------------------------
+  # Herramientas de Accesibilidad Visual (A menos que uses lector de pantalla)
+  # ---------------------------------------------------------------
+  - espeak-ng                 # Sintetizador de voz por software
+  - espeak-ng-data            # Datos de voz de espeak
+  - orca                      # Lector de pantalla de GNOME
+  - brltty                    # Soporte para pantallas Braille
+  
+  # ---------------------------------------------------------------
+  # Servicios en segundo plano e informes redundantes de Fedora
+  # ---------------------------------------------------------------
+  - fedora-ea-notification    # Notificaciones de versiones Alfa/Beta de Fedora
+  - abrt                      # Gestor automático de informes de fallos (Suele consumir mucha RAM y disco)
+  - abrt-cli
+  - abrt-libs
+  # ---------------------------------------------------------------
+  # Eliminar pila de entrada IBus redundante (Solo usas es/en)
+  # ---------------------------------------------------------------
+  - ibus
+  - ibus-chewing
+  - ibus-gtk3
+  - ibus-gtk4
+  - ibus-libs
   # ---------------------------------------------------------------
   # Flatpaks heredados de Bazzite eliminados en origen
   # ---------------------------------------------------------------
