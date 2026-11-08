@@ -165,9 +165,6 @@ EOF
 # Compilar los esquemas para que el sistema reconozca el cambio inmediatamente en el primer inicio
 glib-compile-schemas /usr/share/glib-2.0/schemas/
 
-# Compilar los esquemas para que el sistema reconozca el cambio inmediatamente en el primer inicio
-glib-compile-schemas /usr/share/glib-2.0/schemas/
-
 # 🌍 CONFIGURACIÓN GLOBAL DEL LOCALE (FORZAR CASTELLANO)
 echo "Estableciendo el idioma predeterminado del sistema a Castellano..."
 mkdir -p /etc
