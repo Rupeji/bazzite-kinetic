@@ -36,35 +36,23 @@ chmod 755 /usr/bin/starship
 echo "¡Starship Prompt inyectado con éxito!"
 
 # =====================================================================
-# 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm)
+# Instalar gSlapper de forma local (Blindado contra fallos de red)
 # =====================================================================
-echo "Buscando e instalando la última release de gSlapper para Fedora..."
+echo "Inyectando paquete gSlapper desde los archivos locales..."
 
-BASE_API="https://api.github.com"
-RUTA_API="/repos/Nomadcxx/gSlapper/releases/latest"
-API_URL=$(echo "${BASE_API}${RUTA_API}" | tr -d ' ')
+# Definimos el nombre exacto del archivo RPM local
+ARCHIVO_GSLAPPER_RPM="gslapper-1.5.3-1.fedora42.x86_64.rpm"
 
-if [ -n "${GITHUB_TOKEN:-}" ]; then
-    echo "Usando GITHUB_TOKEN para autenticar la petición a la API..."
-    JSON_DATA=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "$API_URL")
+# Verificamos si existe en tu carpeta compartida /ctx/recursos/
+if [ -f "/ctx/recursos/$ARCHIVO_GSLAPPER_RPM" ]; then
+    echo " -> Instalando paquete local $ARCHIVO_GSLAPPER_RPM mediante dnf5..."
+    dnf5 -y install "/ctx/recursos/$ARCHIVO_GSLAPPER_RPM"
 else
-    echo "Aviso: GITHUB_TOKEN no detectado, haciendo petición pública..."
-    JSON_DATA=$(curl -s "$API_URL")
-fi
-
-URL_RPM=$(echo "$JSON_DATA" | grep -oP '"browser_download_url"\s*:\s*"\K[^"]+' | grep '\.rpm$')
-
-if [ -z "$URL_RPM" ]; then
-    echo "Error: No se pudo encontrar un paquete .rpm en la última versión de gSlapper."
-    echo "Contenido devuelto por la API: $JSON_DATA"
+    echo "Error crítico: No se encontró $ARCHIVO_GSLAPPER_RPM en /ctx/recursos/"
     exit 1
 fi
 
-ARCHIVO_RPM=$(basename "$URL_RPM")
-curl -L -o "$ARCHIVO_RPM" "$URL_RPM"
-dnf5 -y install "$ARCHIVO_RPM"
-rm -f "$ARCHIVO_RPM"
-
+echo "¡gSlapper instalado con éxito de manera local!"
 
 # =====================================================================
 # 3. Mapeo Estético Global de Dotfiles (Estructura Organizada)
