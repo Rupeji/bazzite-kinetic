@@ -1,0 +1,105 @@
+name: Bot de Actualización de Recursos Autónomo
+
+on:
+  schedule:
+    - cron: '0 0 * * 3' # Se ejecuta automáticamente todos los miércoles a las 00:00 UTC
+  workflow_dispatch:     # Nos permite pulsar el botón manual en la pestaña Actions
+
+jobs:
+  upgrade-resources:
+    runs-on: ubuntu-latest
+
+    # 🌟 CRÍTICO: Le damos permiso de escritura al bot para que pueda subir cambios a este mismo repo
+    permissions:
+      contents: write
+
+    steps:
+      - name: Clonar este repositorio
+        uses: actions/checkout@v4
+
+      - name: Descargar y actualizar todos los recursos locales
+        run: |
+          # 1. Definimos la ruta de la carpeta de recursos (Ruta directa de tu repo)
+          DIR_TEST="build_files/recursos"
+          
+          # Forzamos una limpieza previa de los recursos dinámicos
+          rm -f "$DIR_TEST/starship"
+          rm -f "$DIR_TEST/gslapper.rpm"
+          rm -f "$DIR_TEST/Tela-icon-theme.tar.gz"
+          mkdir -p "$DIR_TEST"
+          
+          echo "📥 Iniciando descargas dinámicas automáticas de todos los recursos..."
+          
+          # 2. DEFINIR LAS URLS CON ESPACIOS PARA BLINDARLAS CONTRA RECORTES DEL CHAT
+          URL_STARSHIP_ESPACIOS="https://api .github .com /repos /starship /starship /releases /latest"
+          URL_GSLAPPER_ESPACIOS="https://api .github .com /repos /Nomadcxx /gSlapper /releases /latest"
+          URL_TELA_ESPACIOS="https://github .com /vinceliuice /Tela-icon-theme .git"
+          
+          # Limpiamos los espacios internamente en Bash de manera segura
+          API_STARSHIP=$(echo "$URL_STARSHIP_ESPACIOS" | tr -d ' ')
+          API_GSLAPPER=$(echo "$URL_GSLAPPER_ESPACIOS" | tr -d ' ')
+          URL_TELA=$(echo "$URL_TELA_ESPACIOS" | tr -d ' ')
+          
+          # =====================================================================
+          # A) DESCARGAR STARSHIP PROMPT
+          # =====================================================================
+          echo " -> Consultando API de Starship..."
+          URL_STARSHIP_DOWNLOAD=$(curl -s "$API_STARSHIP" | jq -r '.assets[] | select(.name | endswith("x86_64-unknown-linux-musl.tar.gz")) | .browser_download_url')
+          
+          if [ -n "$URL_STARSHIP_DOWNLOAD" ] && [ "$URL_STARSHIP_DOWNLOAD" != "null" ]; then
+            curl -sSL -o /tmp/starship.tar.gz "$URL_STARSHIP_DOWNLOAD"
+            tar -xzf /tmp/starship.tar.gz -C /tmp/
+            mv /tmp/starship "$DIR_TEST/starship"
+            chmod +x "$DIR_TEST/starship"
+            rm -f /tmp/starship.tar.gz
+            echo " ✅ Starship guardado."
+          fi
+          
+          # =====================================================================
+          # B) DESCARGAR GSLAPPER RPM (CON NOMBRE NEUTRO)
+          # =====================================================================
+          echo " -> Consultando API de gSlapper..."
+          URL_GSLAPPER_DOWNLOAD=$(curl -s "$API_GSLAPPER" | jq -r '.assets[] | select(.name | test("\\.fedora[0-9]+\\.x86_64\\.rpm$")) | .browser_download_url' | head -n 1)
+          
+          if [ -n "$URL_GSLAPPER_DOWNLOAD" ] && [ "$URL_GSLAPPER_DOWNLOAD" != "null" ]; then
+            curl -sSL -o "$DIR_TEST/gslapper.rpm" "$URL_GSLAPPER_DOWNLOAD"
+            echo " ✅ gSlapper RPM guardado."
+          fi
+          
+          # =====================================================================
+          # C) DESCARGAR ICONOS TELA (COMPRESIÓN DINÁMICA)
+          # =====================================================================
+          echo " -> Clonando última versión de Tela Icon Theme..."
+          rm -rf /tmp/Tela-icon-theme
+          git clone --depth 1 "$URL_TELA" /tmp/Tela-icon-theme
+          rm -rf /tmp/Tela-icon-theme/.git
+          
+          echo " -> Empaquetando iconos Tela en Tela-icon-theme.tar.gz..."
+          cd /tmp && tar -czf Tela-icon-theme.tar.gz Tela-icon-theme
+          cd -
+          mv /tmp/Tela-icon-theme.tar.gz "$DIR_TEST/Tela-icon-theme.tar.gz"
+          rm -rf /tmp/Tela-icon-theme
+          echo " ✅ Iconos Tela empaquetados."
+
+      # =====================================================================
+      # 3. GUARDAR CAMBIOS DE FORMA AUTÓNOMA (SIN TOKENS EXTERNOS)
+      # =====================================================================
+      - name: Guardar cambios y actualizar el repositorio
+        run: |
+          EMAIL_ESPACIOS="github-actions[bot] @users .noreply .github .com"
+          EMAIL_LIMPIO=$(echo "$EMAIL_ESPACIOS" | tr -d ' ')
+          
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "$EMAIL_LIMPIO"
+          
+          echo "🚀 Comprobando si hay actualizaciones reales que subir..."
+          git add build_files/recursos/
+          
+          # Hacemos el commit y push usando la sesión nativa de la Action
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "🔄 chore(deps): bot actualizó recursos locales de la ISO"
+            git push origin HEAD:${{ github.ref_name }}
+            echo "🎉 ¡Repositorio actualizado con éxito!"
+          else
+            echo "😎 Todos los recursos ya estaban al día."
+          fi
