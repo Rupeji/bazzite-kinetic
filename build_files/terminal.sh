@@ -10,8 +10,8 @@ DOMINIO_STARSHIP="https://starship.rs"
 ARCHIVO_STARSHIP="install.sh"
 URL_STARSHIP_LIMPIA=$(echo "${DOMINIO_STARSHIP}/${ARCHIVO_STARSHIP}" | tr -d ' ')
 
-# 🌟 CORRECCIÓN: Forzamos la plataforma x86_64-unknown-linux-gnu para evitar el fallo de musl
-curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin" --platform "x86_64-unknown-linux-gnu"
+ 🌟 CORRECCIÓN: Pasamos solo la plataforma sin duplicar la arquitectura (x86_64 se autodetecta)
+curl -sS "$URL_STARSHIP_LIMPIA" | sh -s -- -y --bin-dir "/usr/bin" --platform "unknown-linux-musl"
 
 # =====================================================================
 # 2. Descargar e instalar la ÚLTIMA versión de gSlapper (.rpm)
