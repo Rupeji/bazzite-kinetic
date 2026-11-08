@@ -230,3 +230,16 @@ systemctl disable sddm.service || true # 👈 Desactiva SSDM
 systemctl disable plasmalogin.service || true  # 👈 Desactiva PlasmaLogin
 systemctl enable greetd.service
 systemctl set-default graphical.target
+# =====================================================================
+# 8. Limpieza de Residuos OCI para Certificación de bootc
+# =====================================================================
+echo "Limpiando cachés de dnf5 y metadatos residuales del sistema..."
+dnf5 clean all
+rm -rf /var/cache/dnf /var/cache/yum
+
+echo "Vaciando directorios temporales de compilación en /run y /tmp..."
+rm -rf /run/dnf /run/selinux-policy
+rm -rf /tmp/* /var/tmp/*
+
+echo "Removiendo registros e identificadores temporales de repositorios..."
+rm -rf /var/lib/dnf/repos
