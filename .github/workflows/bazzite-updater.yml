@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Clonar este repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Descargar y actualizar todos los recursos locales
         run: |
