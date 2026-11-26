@@ -19,7 +19,7 @@ jobs:
       - name: Commit y Push del Bot
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add ping.txt
           git commit -m "bot: forzando compilación de bazzite" || exit 0
           git push
